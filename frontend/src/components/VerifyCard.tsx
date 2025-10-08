@@ -6,7 +6,7 @@ import ResultCard from './ResultCard';
 import type { PredictionResult } from '../types';
 import { DocumentTextIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = 'https://truthshield-q21g.onrender.com';
 
 const VerifyCard = () => {
   const [text, setText] = useState('');
