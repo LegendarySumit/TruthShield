@@ -1,0 +1,27 @@
+
+version: '3.8'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    # The backend needs the model files to be present.
+    # You should run `python backend/train.py` locally first.
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Avoids overwriting node_modules with local empty folder
+    environment:
+      - VITE_API_URL=http://backend:8000
+    depends_on:
+      - backend

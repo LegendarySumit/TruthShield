@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Favicon</title>
+</head>
+<body>
+    <canvas id="canvas" width="512" height="512"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Background gradient
+        const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+        gradient.addColorStop(0, '#667eea');
+        gradient.addColorStop(1, '#764ba2');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 512, 512);
+        
+        // Draw shield
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.moveTo(256, 100);
+        ctx.lineTo(400, 150);
+        ctx.lineTo(400, 300);
+        ctx.quadraticCurveTo(400, 400, 256, 450);
+        ctx.quadraticCurveTo(112, 400, 112, 300);
+        ctx.lineTo(112, 150);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Draw checkmark
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 30;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(180, 260);
+        ctx.lineTo(230, 320);
+        ctx.lineTo(330, 200);
+        ctx.stroke();
+        
+        // Download as favicon
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.download = 'favicon.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }, 100);
+    </script>
+</body>
+</html>
