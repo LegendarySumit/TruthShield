@@ -115,9 +115,9 @@ const HowItWorks: React.FC = () => {
               </div>
 
               {/* Content */}
-              <div className="flex-1 bg-gray-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/50 transition-all duration-300">
-                <h3 className="text-2xl font-bold text-white mb-3">{step.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{step.description}</p>
+              <div className="flex-1 bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/50 transition-all duration-300">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{step.title}</h3>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{step.description}</p>
               </div>
             </div>
 
@@ -136,7 +136,7 @@ const HowItWorks: React.FC = () => {
         viewport={{ once: true }}
         className="max-w-6xl mx-auto"
       >
-        <h2 className="text-4xl font-bold text-center mb-12 text-white">
+        <h2 className="text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
           Technical Deep Dive
         </h2>
 
@@ -148,13 +148,13 @@ const HowItWorks: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="bg-gray-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/50 transition-all duration-300"
+              className="bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/50 transition-all duration-300"
             >
-              <h3 className="text-xl font-bold text-white mb-4">{section.title}</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{section.title}</h3>
               <ul className="space-y-3">
                 {section.items.map((item, i) => (
-                  <li key={i} className="flex items-start text-gray-300">
-                    <span className="text-purple-400 mr-2 mt-1">✓</span>
+                  <li key={i} className="flex items-start text-gray-700 dark:text-gray-300">
+                    <span className="text-purple-500 dark:text-purple-400 mr-2 mt-1">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -171,9 +171,9 @@ const HowItWorks: React.FC = () => {
         viewport={{ once: true }}
         className="max-w-4xl mx-auto mt-20 text-center"
       >
-        <div className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-purple-500/20 rounded-2xl p-10">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to Try It Out?</h2>
-          <p className="text-gray-400 mb-8 text-lg">
+        <div className="bg-gradient-to-r from-purple-100/50 to-pink-100/50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-500/20 rounded-2xl p-10">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Ready to Try It Out?</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">
             Experience the power of AI-driven fake news detection
           </p>
           <a

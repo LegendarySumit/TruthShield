@@ -73,18 +73,18 @@ const FAQ: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-gray-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-300"
+            className="bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-300"
           >
             <details className="group">
-              <summary className="flex items-center justify-between cursor-pointer p-6 hover:bg-gray-800/50 transition-colors">
-                <h3 className="text-lg font-semibold text-white pr-4">{faq.question}</h3>
+              <summary className="flex items-center justify-between cursor-pointer p-6 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white pr-4">{faq.question}</h3>
                 <div className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center group-open:rotate-180 transition-transform">
-                  <svg className="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-purple-500 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </summary>
-              <div className="px-6 pb-6 text-gray-300 leading-relaxed border-t border-gray-800/50 pt-4">
+              <div className="px-6 pb-6 text-gray-700 dark:text-gray-300 leading-relaxed border-t border-gray-300/50 dark:border-gray-800/50 pt-4">
                 {faq.answer}
               </div>
             </details>
@@ -99,14 +99,17 @@ const FAQ: React.FC = () => {
         transition={{ delay: 0.8 }}
         className="max-w-4xl mx-auto mt-16 text-center"
       >
-        <div className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-purple-500/20 rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Still have questions?</h2>
-          <p className="text-gray-400 mb-6">
+        <div className="bg-gradient-to-r from-purple-100/50 to-pink-100/50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-500/20 rounded-2xl p-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Still have questions?</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Can't find the answer you're looking for? We're here to help!
           </p>
-          <button className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300">
+          <a 
+            href="mailto:support@truthshield.ai?subject=Support Request&body=Hello TruthShield Team,%0D%0A%0D%0AI have a question about..."
+            className="inline-block px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
+          >
             Contact Support
-          </button>
+          </a>
         </div>
       </motion.div>
     </div>

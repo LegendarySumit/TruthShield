@@ -106,10 +106,10 @@ const AboutPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + idx * 0.1 }}
                 whileHover={{ y: -5, scale: 1.02 }}
-                className="group relative"
+                className="group relative flex"
               >
                 <div className={`absolute -inset-0.5 bg-gradient-to-r ${tech.gradient} rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500`}></div>
-                <div className="relative bg-white dark:bg-gray-900 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-lg">
+                <div className="relative bg-white dark:bg-gray-900 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-lg flex flex-col w-full">
                   <div className="flex items-center space-x-3 mb-4">
                     <div className={`p-3 rounded-xl bg-gradient-to-r ${tech.gradient} text-white shadow-lg`}>
                       {tech.icon}
@@ -118,7 +118,7 @@ const AboutPage = () => {
                       {tech.category}
                     </h3>
                   </div>
-                  <ul className="space-y-2">
+                  <ul className="space-y-2 flex-grow">
                     {tech.items.map((item, itemIdx) => (
                       <motion.li
                         key={itemIdx}
@@ -127,7 +127,7 @@ const AboutPage = () => {
                         transition={{ delay: 0.6 + idx * 0.1 + itemIdx * 0.05 }}
                         className="flex items-center text-gray-700 dark:text-gray-300"
                       >
-                        <span className={`w-2 h-2 rounded-full bg-gradient-to-r ${tech.gradient} mr-3`}></span>
+                        <span className={`w-2 h-2 rounded-full bg-gradient-to-r ${tech.gradient} mr-3 flex-shrink-0`}></span>
                         {item}
                       </motion.li>
                     ))}
