@@ -8,6 +8,7 @@ import {
   SparklesIcon,
   ClipboardDocumentCheckIcon
 } from '@heroicons/react/24/outline';
+import Footer from '../components/Footer';
 
 const HowItWorks: React.FC = () => {
   const steps = [
@@ -184,8 +185,10 @@ const HowItWorks: React.FC = () => {
           </a>
         </div>
       </motion.div>
+      <Footer />
     </div>
   );
 };
+
 
 export default HowItWorks;

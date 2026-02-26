@@ -1,0 +1,38 @@
+# Environment variables - NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Vite build
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
