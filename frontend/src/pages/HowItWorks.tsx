@@ -178,7 +178,7 @@ const HowItWorks: React.FC = () => {
           </p>
           <a
             href="/"
-            className="inline-block px-10 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
+            className="inline-block px-10 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 hover:scale-105"
           >
             Start Verifying Now
           </a>
