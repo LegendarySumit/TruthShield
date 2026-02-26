@@ -21,9 +21,10 @@ const Statistics: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-20 pb-16 px-4">
-      {/* Header */}
-      <motion.div
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-1 pt-20 pb-16 px-4">
+        {/* Header */}
+        <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto text-center mb-16"
@@ -108,6 +109,7 @@ const Statistics: React.FC = () => {
           </div>
         </div>
       </motion.div>
+      </div>
       <Footer />
     </div>
   );

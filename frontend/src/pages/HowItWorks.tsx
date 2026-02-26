@@ -81,13 +81,14 @@ const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-20 pb-16 px-4">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto text-center mb-16"
-      >
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-1 pt-20 pb-16 px-4">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-4xl mx-auto text-center mb-16"
+        >
         <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text">
           How It Works
         </h1>
@@ -185,6 +186,7 @@ const HowItWorks: React.FC = () => {
           </a>
         </div>
       </motion.div>
+      </div>
       <Footer />
     </div>
   );
