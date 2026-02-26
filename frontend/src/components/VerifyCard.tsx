@@ -67,7 +67,7 @@ const VerifyCard = () => {
         className="relative"
       >
         {/* Glowing border effect */}
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-2xl blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-2xl blur opacity-10 group-hover:opacity-30 transition duration-1000"></div>
         
         <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-purple-200 dark:border-purple-800">
           <form onSubmit={handleSubmit}>
@@ -93,14 +93,14 @@ const VerifyCard = () => {
             <div className="relative group">
               <motion.div
                 animate={text.length > 0 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-                className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-500"
+                className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-10 group-hover:opacity-20 transition duration-500"
               ></motion.div>
               
               <textarea
                 value={text}
                 onChange={handleTextChange}
                 placeholder="📰 Paste your news article here... (minimum 50 characters)"
-                className="relative w-full h-56 p-5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-purple-500 dark:focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 focus:outline-none transition-all duration-300 resize-none backdrop-blur-sm font-medium"
+                className="relative w-full h-56 p-5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-purple-500 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-500/15 focus:outline-none transition-all duration-300 resize-none backdrop-blur-sm font-medium"
                 style={{ 
                   backgroundImage: 'linear-gradient(to right, rgba(168, 85, 247, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(168, 85, 247, 0.05) 1px, transparent 1px)',
                   backgroundSize: '20px 20px'
@@ -141,7 +141,7 @@ const VerifyCard = () => {
                 className={`relative px-12 py-4 rounded-xl font-bold text-lg text-white shadow-xl transition-all duration-300 ${
                   loading
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:shadow-2xl hover:shadow-purple-500/50'
+                    : 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:shadow-2xl hover:shadow-purple-500/20'
                 }`}
               >
                 {loading ? (
@@ -166,7 +166,7 @@ const VerifyCard = () => {
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-xl blur-xl opacity-50"
+                    className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-xl blur-lg opacity-25"
                   />
                 )}
               </motion.button>

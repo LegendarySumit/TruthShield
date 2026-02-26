@@ -1,22 +1,27 @@
 
-import joblib
+import json
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-import numpy as np
 import os
+import google.generativeai as genai
+from dotenv import load_dotenv
 
 # --- Configuration ---
-# Get the directory where this script is located
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR = os.path.join(BASE_DIR, "models")
-MODEL_PATH = os.path.join(MODEL_DIR, "model.pkl")
-VECTORIZER_PATH = os.path.join(MODEL_DIR, "vectorizer.pkl")
+# Load environment variables
+load_dotenv()
+
+# Configure Gemini API
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    print("WARNING: GEMINI_API_KEY not found in environment variables.")
+else:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 # --- App Initialization ---
 app = FastAPI(
     title="Fake News Detector API",
-    description="An API to detect fake news using a machine learning model.",
+    description="An API to detect fake news using Gemini AI.",
     version="1.0.0"
 )
 
@@ -32,19 +37,6 @@ app.add_middleware(
 # --- In-memory Cache ---
 cache = {}
 
-# --- Load Model and Vectorizer ---
-def load_model():
-    """Loads the model and vectorizer from disk if they exist."""
-    if not (os.path.exists(MODEL_PATH) and os.path.exists(VECTORIZER_PATH)):
-        print("WARNING: Model or vectorizer not found. Running in dummy mode.")
-        return None, None
-    
-    model = joblib.load(MODEL_PATH)
-    vectorizer = joblib.load(VECTORIZER_PATH)
-    return model, vectorizer
-
-model, vectorizer = load_model()
-
 # --- Pydantic Models ---
 class NewsArticle(BaseModel):
     text: str
@@ -54,60 +46,71 @@ class PredictionResponse(BaseModel):
     confidence: float
     explanation: str
 
-# --- Helper Functions ---
-def generate_explanation(prediction: str, confidence: float) -> str:
-    """Generates a simple explanation for the prediction."""
-    if prediction == "Real":
-        if confidence > 0.9:
-            return "The model is highly confident that this is a real news article based on its textual content and structure."
-        else:
-            return "The model predicts this is a real news article, but with some uncertainty. It shares some characteristics with both real and fake news."
-    else: # Fake
-        if confidence > 0.9:
-            return "The model is highly confident that this is a fake news article. It likely contains language patterns commonly found in fabricated stories."
-        else:
-            return "The model predicts this is a fake news article, but with some uncertainty. It's advisable to cross-reference with other sources."
-
 # --- API Endpoints ---
 @app.get("/", tags=["Health Check"])
 def read_root():
     """Root endpoint for health checks."""
     return {"status": "API is running"}
 
-@app.post("/predict", response_model=PredictionResponse, tags=["Machine Learning"])
-def predict(article: NewsArticle):
-    """Predicts if a news article is real or fake."""
+@app.post("/predict", response_model=PredictionResponse, tags=["AI Analysis"])
+async def predict(article: NewsArticle):
+    """Predicts if a news article is real or fake using Gemini AI."""
     if not article.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty.")
 
-    # If model is not loaded, return a dummy response
-    if model is None or vectorizer is None:
-        return PredictionResponse(
-            prediction="Real",
-            confidence=0.99,
-            explanation="This is a dummy response. Please train a real model for actual predictions."
-        )
+    if not GEMINI_API_KEY:
+        raise HTTPException(status_code=500, detail="Gemini API key is not configured.")
 
     # Check cache first
     if article.text in cache:
         return cache[article.text]
 
     try:
-        # TF-IDF Transformation
-        text_vector = vectorizer.transform([article.text])
+        # Initialize the model
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        
+        # Create the prompt
+        prompt = f"""
+        You are an expert fact-checker and journalist. Analyze the following news article text and determine if it is likely "Real" or "Fake" news.
+        
+        Article Text:
+        \"\"\"{article.text}\"\"\"
+        
+        Provide your analysis in the following JSON format exactly, with no markdown formatting or extra text:
+        {{
+            "prediction": "Real" or "Fake",
+            "confidence": a float between 0.0 and 1.0 representing your confidence,
+            "explanation": "A brief explanation of why you made this prediction, pointing out specific linguistic markers, lack of sources, sensationalism, or factual consistency."
+        }}
+        """
 
-        # Prediction
-        prediction_proba = model.predict_proba(text_vector)[0]
-        prediction_label = np.argmax(prediction_proba)
-
-        confidence = float(prediction_proba[prediction_label])
-        prediction_text = "Real" if prediction_label == 0 else "Fake"
-
-        # Generate Explanation
-        explanation = generate_explanation(prediction_text, confidence)
+        # Generate response
+        response = model.generate_content(prompt)
+        response_text = response.text.strip()
+        
+        # Clean up potential markdown formatting from the response
+        if response_text.startswith("```json"):
+            response_text = response_text[7:]
+        if response_text.startswith("```"):
+            response_text = response_text[3:]
+        if response_text.endswith("```"):
+            response_text = response_text[:-3]
+            
+        response_text = response_text.strip()
+        
+        # Parse JSON
+        result = json.loads(response_text)
+        
+        # Validate and format the result
+        prediction_text = result.get("prediction", "Fake")
+        if prediction_text not in ["Real", "Fake"]:
+            prediction_text = "Fake"
+            
+        confidence = float(result.get("confidence", 0.5))
+        explanation = result.get("explanation", "No explanation provided.")
 
         # Create response
-        response = PredictionResponse(
+        prediction_response = PredictionResponse(
             prediction=prediction_text,
             confidence=confidence,
             explanation=explanation
@@ -116,9 +119,11 @@ def predict(article: NewsArticle):
         # Store in cache
         if len(cache) > 100: # Simple cache eviction
             cache.pop(next(iter(cache)))
-        cache[article.text] = response
+        cache[article.text] = prediction_response
 
-        return response
+        return prediction_response
 
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Failed to parse AI response.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

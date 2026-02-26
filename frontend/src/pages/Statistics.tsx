@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldCheckIcon, ChartBarIcon, AcademicCapIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
+import Footer from '../components/Footer';
 
 const Statistics: React.FC = () => {
   const stats = [
@@ -107,6 +108,7 @@ const Statistics: React.FC = () => {
           </div>
         </div>
       </motion.div>
+      <Footer />
     </div>
   );
 };

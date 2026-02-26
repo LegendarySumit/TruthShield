@@ -1,16 +1,33 @@
 
 import { motion } from 'framer-motion';
 import { HeartIcon, ShieldCheckIcon } from '@heroicons/react/24/solid';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+
+  const quickLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
+    { name: 'How It Works', path: '/how-it-works' },
+    { name: 'Statistics', path: '/statistics' },
+    { name: 'FAQ', path: '/faq' },
+  ];
+
+  const resourceLinks = [
+    { name: 'Documentation', path: '#' },
+    { name: 'Support', path: '#' },
+    { name: 'Privacy Policy', path: '#' },
+    { name: 'Terms of Service', path: '#' },
+    { name: 'Contact', path: '#' },
+  ];
 
   return (
     <footer className="relative mt-20 bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-10">
         <motion.div
-          className="absolute top-0 left-0 w-64 h-64 bg-purple-500 rounded-full blur-3xl"
+          className="absolute top-0 left-0 w-64 h-64 bg-purple-500 rounded-full blur-3xl opacity-50"
           animate={{
             x: [0, 100, 0],
             y: [0, 50, 0],
@@ -18,7 +35,7 @@ const Footer = () => {
           transition={{ duration: 20, repeat: Infinity }}
         />
         <motion.div
-          className="absolute bottom-0 right-0 w-64 h-64 bg-pink-500 rounded-full blur-3xl"
+          className="absolute bottom-0 right-0 w-64 h-64 bg-pink-500 rounded-full blur-3xl opacity-50"
           animate={{
             x: [0, -100, 0],
             y: [0, -50, 0],
@@ -62,13 +79,13 @@ const Footer = () => {
               Quick Links
             </h4>
             <ul className="space-y-1.5 sm:space-y-2">
-              {['Home', 'About', 'How It Works', 'API', 'Blog'].map((link, idx) => (
+              {quickLinks.map((link, idx) => (
                 <motion.li
                   key={idx}
-                  whileHover={{ x: 5 }}
-                  className="text-gray-300 hover:text-purple-400 transition-colors cursor-pointer text-xs sm:text-sm"
+                  whileHover={{ x: 3 }}
+                  className="text-gray-300 hover:text-white transition-colors cursor-pointer text-xs sm:text-sm"
                 >
-                  {link}
+                  <Link to={link.path}>{link.name}</Link>
                 </motion.li>
               ))}
             </ul>
@@ -80,13 +97,13 @@ const Footer = () => {
               Resources
             </h4>
             <ul className="space-y-1.5 sm:space-y-2">
-              {['Documentation', 'Support', 'Privacy Policy', 'Terms of Service', 'Contact'].map((link, idx) => (
+              {resourceLinks.map((link, idx) => (
                 <motion.li
                   key={idx}
-                  whileHover={{ x: 5 }}
-                  className="text-gray-300 hover:text-pink-400 transition-colors cursor-pointer text-xs sm:text-sm"
+                  whileHover={{ x: 3 }}
+                  className="text-gray-300 hover:text-white transition-colors cursor-pointer text-xs sm:text-sm"
                 >
-                  {link}
+                  <a href={link.path}>{link.name}</a>
                 </motion.li>
               ))}
             </ul>
@@ -123,7 +140,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg hover:shadow-blue-500/50 transition-all"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg hover:shadow-blue-500/20 transition-all"
               title="Twitter"
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -137,7 +154,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-gray-700 to-gray-900 flex items-center justify-center text-white shadow-lg hover:shadow-gray-500/50 transition-all"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-gray-700 to-gray-900 flex items-center justify-center text-white shadow-lg hover:shadow-gray-500/20 transition-all"
               title="GitHub"
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -151,7 +168,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center text-white shadow-lg hover:shadow-blue-500/50 transition-all"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center text-white shadow-lg hover:shadow-blue-500/20 transition-all"
               title="LinkedIn"
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -165,7 +182,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-lg hover:shadow-indigo-500/50 transition-all"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-lg hover:shadow-indigo-500/20 transition-all"
               title="Discord"
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">

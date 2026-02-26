@@ -88,53 +88,72 @@ const AboutPage = () => {
         </motion.div>
 
         {/* Technologies Grid */}
+        <div className="hidden">
+           {/* Original content removed */}
+        </div>
+
+        {/* Contact Details */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-16"
+           initial={{ opacity: 0, y: 30 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ delay: 0.4 }}
+           className="mb-16"
         >
-          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
-            Technology Stack
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {technologies.map((tech, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + idx * 0.1 }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="group relative flex"
-              >
-                <div className={`absolute -inset-0.5 bg-gradient-to-r ${tech.gradient} rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500`}></div>
-                <div className="relative bg-white dark:bg-gray-900 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-lg flex flex-col w-full">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className={`p-3 rounded-xl bg-gradient-to-r ${tech.gradient} text-white shadow-lg`}>
-                      {tech.icon}
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {tech.category}
-                    </h3>
+          <div className="relative overflow-hidden bg-gradient-to-br from-indigo-900 to-purple-900 rounded-3xl p-10 text-white shadow-2xl">
+            {/* Background decorations */}
+            <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-pink-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+            <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 bg-blue-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+
+            <div className="relative z-10 text-center">
+              <h2 className="text-3xl font-black mb-6 bg-gradient-to-r from-blue-200 to-pink-200 text-transparent bg-clip-text">
+                Get in Touch
+              </h2>
+              <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
+                Have questions about our AI detection methodology or want to report a bug? We'd love to hear from you.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <motion.div 
+                  whileHover={{ y: -5 }}
+                  className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20 hover:bg-white/20 transition-all cursor-pointer"
+                >
+                  <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
                   </div>
-                  <ul className="space-y-2 flex-grow">
-                    {tech.items.map((item, itemIdx) => (
-                      <motion.li
-                        key={itemIdx}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.6 + idx * 0.1 + itemIdx * 0.05 }}
-                        className="flex items-center text-gray-700 dark:text-gray-300"
-                      >
-                        <span className={`w-2 h-2 rounded-full bg-gradient-to-r ${tech.gradient} mr-3 flex-shrink-0`}></span>
-                        {item}
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            ))}
+                  <h3 className="font-bold mb-2">Email Support</h3>
+                  <p className="text-sm text-blue-100">contact@truthshield.ai</p>
+                </motion.div>
+
+                <motion.div 
+                  whileHover={{ y: -5 }}
+                  className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20 hover:bg-white/20 transition-all cursor-pointer"
+                >
+                  <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-purple-300">
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                    </svg>
+                  </div>
+                  <h3 className="font-bold mb-2">Media Inquiries</h3>
+                  <p className="text-sm text-blue-100">press@truthshield.ai</p>
+                </motion.div>
+
+                <motion.div 
+                  whileHover={{ y: -5 }}
+                  className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20 hover:bg-white/20 transition-all cursor-pointer"
+                >
+                  <div className="w-12 h-12 bg-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-pink-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="font-bold mb-2">Headquarters</h3>
+                  <p className="text-sm text-blue-100">Silicon Valley, CA</p>
+                </motion.div>
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -219,7 +238,7 @@ const AboutPage = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => window.location.href = '/'}
-            className="px-10 py-5 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white font-bold text-lg rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all duration-300"
+            className="px-10 py-5 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white font-bold text-lg rounded-full shadow-2xl hover:shadow-purple-500/20 transition-all duration-300"
           >
             Try TruthShield Now ✨
           </motion.button>

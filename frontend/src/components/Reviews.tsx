@@ -185,7 +185,7 @@ const Reviews = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all duration-300"
+            className="px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300"
           >
             Try It Now - It's Free! ✨
           </motion.button>

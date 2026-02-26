@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
+import Footer from '../components/Footer';
 
 const FAQ: React.FC = () => {
   const faqs = [
@@ -105,13 +106,14 @@ const FAQ: React.FC = () => {
             Can't find the answer you're looking for? We're here to help!
           </p>
           <a 
-            href="mailto:support@truthshield.ai?subject=Support Request&body=Hello TruthShield Team,%0D%0A%0D%0AI have a question about..."
-            className="inline-block px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
+            href="mailto:contact@truthshield.ai?subject=Support Request&body=Hello TruthShield Team,%0D%0A%0D%0AI have a question about..."
+            className="inline-block px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 hover:scale-105"
           >
             Contact Support
           </a>
         </div>
       </motion.div>
+      <Footer />
     </div>
   );
 };
