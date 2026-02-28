@@ -22,23 +22,23 @@ const Statistics: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-1 pt-20 pb-16 px-4">
+      <div className="flex-1 pt-16 sm:pt-18 md:pt-20 pb-10 sm:pb-12 md:pb-16 px-3 xs:px-4">
         {/* Header */}
         <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto text-center mb-16"
+        className="max-w-4xl mx-auto text-center mb-8 sm:mb-12 md:mb-16"
       >
-        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-400 via-purple-500 to-violet-500 text-transparent bg-clip-text">
+        <h1 className="text-3xl xs:text-4xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-indigo-400 via-purple-500 to-violet-500 text-transparent bg-clip-text">
           Model Statistics
         </h1>
-        <p className="text-xl text-gray-400">
+        <p className="text-base sm:text-lg md:text-xl text-gray-400">
           Real-time performance metrics and technical details
         </p>
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+      <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3 xs:gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-12 md:mb-16 px-1 xs:px-0">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
@@ -50,12 +50,12 @@ const Statistics: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl -z-10"
               style={{ background: `linear-gradient(to right, var(--tw-gradient-stops))` }}
             />
-            <div className="bg-white/80 dark:bg-gray-950/50 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-6 hover:border-indigo-500/50 transition-all duration-300">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${stat.color} p-2.5 mb-4`}>
+            <div className="h-full bg-white/80 dark:bg-gray-950/50 backdrop-blur-xl border border-indigo-500/20 rounded-xl sm:rounded-2xl p-3.5 xs:p-4 sm:p-5 md:p-6 hover:border-indigo-500/50 transition-all duration-300 flex flex-col">
+              <div className={`w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-gradient-to-r ${stat.color} p-1.5 xs:p-2 sm:p-2 md:p-2.5 mb-2.5 sm:mb-3 md:mb-4`}>
                 <stat.icon className="w-full h-full text-white" />
               </div>
-              <div className="text-4xl font-bold text-gray-900 dark:text-white mb-2">{stat.value}</div>
-              <div className="text-gray-600 dark:text-gray-400 text-sm">{stat.label}</div>
+              <div className="text-2xl xs:text-3xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">{stat.value}</div>
+              <div className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm mt-auto">{stat.label}</div>
             </div>
           </motion.div>
         ))}
@@ -69,14 +69,14 @@ const Statistics: React.FC = () => {
         className="max-w-6xl mx-auto"
       >
         {/* Section header */}
-        <div className="mb-10">
-          <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-3">Technical Specifications</h2>
-          <p className="text-gray-500 dark:text-gray-400 text-lg">Core model architecture and performance benchmarks</p>
+        <div className="mb-6 sm:mb-8 md:mb-10">
+          <h2 className="text-2xl xs:text-3xl sm:text-3xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2 sm:mb-3">Technical Specifications</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base md:text-lg">Core model architecture and performance benchmarks</p>
           <div className="mt-4 h-px w-24 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></div>
         </div>
 
         {/* Spec grid — full width, 3-column */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-2.5 xs:gap-3 sm:gap-4 mb-8 sm:mb-10 md:mb-12">
           {modelDetails.map((detail, index) => (
             <motion.div
               key={detail.label}
@@ -84,21 +84,21 @@ const Statistics: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 + index * 0.08 }}
               whileHover={{ y: -3 }}
-              className="flex justify-between items-center p-5 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-200/80 dark:border-gray-700/30 hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all duration-300 group"
+              className="flex justify-between items-center p-3 xs:p-3.5 sm:p-4 md:p-5 bg-gray-50 dark:bg-gray-800/40 rounded-lg sm:rounded-xl border border-gray-200/80 dark:border-gray-700/30 hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all duration-300 group"
             >
-              <span className="text-gray-500 dark:text-gray-400 text-sm">{detail.label}</span>
-              <span className="text-gray-900 dark:text-white font-bold text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{detail.value}</span>
+              <span className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{detail.label}</span>
+              <span className="text-gray-900 dark:text-white font-bold text-xs sm:text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{detail.value}</span>
             </motion.div>
           ))}
         </div>
 
         {/* Divider */}
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent mb-12"></div>
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent mb-8 sm:mb-10 md:mb-12"></div>
 
         {/* Training Configuration — centered layout */}
-        <div className="text-center mb-10">
-          <h3 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight mb-4">Training Configuration</h3>
-          <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed max-w-2xl mx-auto">
+        <div className="text-center mb-6 sm:mb-8 md:mb-10">
+          <h3 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight mb-3 sm:mb-4">Training Configuration</h3>
+          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
             Our detection model is built on a carefully crafted training pipeline. From cleaning raw news articles to producing a production-grade classifier, 
             every step is designed to maximize accuracy while maintaining balanced performance across both real and fake news categories.
           </p>
@@ -106,7 +106,7 @@ const Statistics: React.FC = () => {
         </div>
 
         {/* Steps — centered 2-column grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-4xl mx-auto">
           {[
             { label: 'Text Preprocessing', desc: 'All input is lowercased, URLs are stripped, and punctuation is cleaned to normalize text before analysis.' },
             { label: 'Vectorization', desc: 'TF-IDF converts text into numerical features using unigrams and bigrams (n-gram range: 1-2) with up to 5,000 features.' },
@@ -119,14 +119,14 @@ const Statistics: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 + i * 0.08 }}
               whileHover={{ y: -3 }}
-              className="flex items-start gap-4 p-6 rounded-xl bg-gray-50 dark:bg-gray-800/30 border border-gray-200/80 dark:border-gray-700/30 hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all duration-300 group"
+              className="flex items-start gap-3 sm:gap-4 p-3.5 xs:p-4 sm:p-5 md:p-6 rounded-lg sm:rounded-xl bg-gray-50 dark:bg-gray-800/30 border border-gray-200/80 dark:border-gray-700/30 hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all duration-300 group"
             >
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-500/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+              <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-indigo-100 dark:bg-indigo-500/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                 <span className="text-indigo-600 dark:text-indigo-400 text-xs font-bold">{String(i + 1).padStart(2, '0')}</span>
               </div>
               <div className="min-w-0">
-                <div className="font-bold text-gray-900 dark:text-white text-[15px] mb-1">{item.label}</div>
-                <div className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{item.desc}</div>
+                <div className="font-bold text-gray-900 dark:text-white text-sm sm:text-[15px] mb-0.5 sm:mb-1">{item.label}</div>
+                <div className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed">{item.desc}</div>
               </div>
             </motion.div>
           ))}

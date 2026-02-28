@@ -4,7 +4,7 @@ import { SparklesIcon, ShieldCheckIcon, BoltIcon } from '@heroicons/react/24/sol
 
 const Hero = () => {
   return (
-    <div className="relative text-center py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div className="relative text-center py-14 xs:py-16 sm:py-20 md:py-24 px-3 xs:px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Floating particles */}
       {[...Array(6)].map((_, i) => (
         <motion.div
@@ -42,7 +42,7 @@ const Hero = () => {
           transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
           className="inline-block"
         >
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-4 bg-[length:200%_100%]">
+          <h1 className="text-[1.75rem] xs:text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-3 sm:mb-4 bg-[length:200%_100%] leading-tight">
             Unmask the Truth
           </h1>
         </motion.div>
@@ -53,11 +53,11 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="flex items-center justify-center space-x-2 mb-6"
         >
-          <SparklesIcon className="h-6 w-6 text-yellow-500" />
-          <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">
+          <SparklesIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+          <h2 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">
             AI-Powered News Verification
           </h2>
-          <SparklesIcon className="h-6 w-6 text-yellow-500" />
+          <SparklesIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
         </motion.div>
       </motion.div>
 
@@ -66,7 +66,7 @@ const Hero = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed"
+        className="mt-4 sm:mt-6 max-w-3xl mx-auto text-sm xs:text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed"
       >
         In an era of <span className="font-bold text-indigo-600 dark:text-indigo-400">misinformation</span> and <span className="font-bold text-purple-600 dark:text-purple-400">fake news</span>, 
         our cutting-edge AI technology helps you distinguish <span className="font-bold text-emerald-600 dark:text-emerald-400">fact from fiction</span>. 
@@ -78,30 +78,30 @@ const Hero = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.7 }}
-        className="mt-10 flex flex-wrap items-center justify-center gap-4"
+        className="mt-6 sm:mt-8 md:mt-10 flex flex-wrap items-center justify-center gap-2 xs:gap-3 sm:gap-4"
       >
         <motion.div
           whileHover={{ scale: 1.05, y: -5 }}
-          className="flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 dark:from-indigo-500/30 dark:to-purple-500/30 backdrop-blur-sm border border-indigo-300 dark:border-indigo-500"
+          className="flex items-center space-x-1.5 sm:space-x-2 px-3 py-2 xs:px-4 sm:px-6 sm:py-3 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 dark:from-indigo-500/30 dark:to-purple-500/30 backdrop-blur-sm border border-indigo-300 dark:border-indigo-500"
         >
-          <ShieldCheckIcon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-          <span className="font-semibold text-gray-800 dark:text-gray-200">99% Accuracy</span>
+          <ShieldCheckIcon className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 dark:text-indigo-400" />
+          <span className="font-semibold text-xs xs:text-sm sm:text-base text-gray-800 dark:text-gray-200">99% Accuracy</span>
         </motion.div>
 
         <motion.div
           whileHover={{ scale: 1.05, y: -5 }}
-          className="flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 dark:from-blue-500/30 dark:to-cyan-500/30 backdrop-blur-sm border border-blue-300 dark:border-blue-500"
+          className="flex items-center space-x-1.5 sm:space-x-2 px-3 py-2 xs:px-4 sm:px-6 sm:py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 dark:from-blue-500/30 dark:to-cyan-500/30 backdrop-blur-sm border border-blue-300 dark:border-blue-500"
         >
-          <BoltIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-          <span className="font-semibold text-gray-800 dark:text-gray-200">Instant Analysis</span>
+          <BoltIcon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
+          <span className="font-semibold text-xs xs:text-sm sm:text-base text-gray-800 dark:text-gray-200">Instant Analysis</span>
         </motion.div>
 
         <motion.div
           whileHover={{ scale: 1.05, y: -5 }}
-          className="flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 dark:from-green-500/30 dark:to-emerald-500/30 backdrop-blur-sm border border-green-300 dark:border-green-500"
+          className="flex items-center space-x-1.5 sm:space-x-2 px-3 py-2 xs:px-4 sm:px-6 sm:py-3 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 dark:from-green-500/30 dark:to-emerald-500/30 backdrop-blur-sm border border-green-300 dark:border-green-500"
         >
-          <SparklesIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
-          <span className="font-semibold text-gray-800 dark:text-gray-200">Free to Use</span>
+          <SparklesIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
+          <span className="font-semibold text-xs xs:text-sm sm:text-base text-gray-800 dark:text-gray-200">Free to Use</span>
         </motion.div>
       </motion.div>
 
@@ -110,7 +110,7 @@ const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, y: [0, 10, 0] }}
         transition={{ opacity: { delay: 1.5 }, y: { duration: 1.5, repeat: Infinity } }}
-        className="mt-16"
+        className="mt-8 sm:mt-12 md:mt-16"
       >
         <div className="w-6 h-10 border-2 border-purple-500 rounded-full mx-auto relative">
           <motion.div

@@ -10,29 +10,29 @@ const AboutPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="max-w-6xl mx-auto py-24 px-4 sm:px-6 lg:px-8"
+        className="max-w-6xl mx-auto py-16 xs:py-18 sm:py-20 md:py-24 px-3 xs:px-4 sm:px-6 lg:px-8"
       >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 sm:mb-12 md:mb-16"
         >
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
             className="inline-block mb-6"
           >
-            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 flex items-center justify-center shadow-2xl shadow-indigo-500/50">
-              <ShieldCheckIcon className="h-10 w-10 text-white" />
+            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 flex items-center justify-center shadow-2xl shadow-indigo-500/50">
+              <ShieldCheckIcon className="h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 text-white" />
             </div>
           </motion.div>
 
-          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-6">
+          <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-4 sm:mb-6">
             About TruthShield
           </h1>
-          <p className="mt-4 max-w-3xl mx-auto text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
+          <p className="mt-3 sm:mt-4 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
             A cutting-edge <span className="font-bold text-indigo-600 dark:text-indigo-400">full-stack application</span> that leverages 
             <span className="font-bold text-violet-600 dark:text-violet-400"> artificial intelligence</span> to combat misinformation 
             and verify news authenticity in real-time.
@@ -44,15 +44,15 @@ const AboutPage = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-16 relative"
+          className="mb-10 sm:mb-12 md:mb-16 relative"
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl blur opacity-20"></div>
-          <div className="relative bg-white/90 dark:bg-gray-950/90 backdrop-blur-xl rounded-2xl p-8 border border-indigo-200 dark:border-indigo-800 shadow-xl">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-              <SparklesIcon className="h-8 w-8 mr-3 text-indigo-600" />
+          <div className="relative bg-white/90 dark:bg-gray-950/90 backdrop-blur-xl rounded-2xl p-4 xs:p-5 sm:p-6 md:p-8 border border-indigo-200 dark:border-indigo-800 shadow-xl">
+            <h2 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 flex items-center">
+              <SparklesIcon className="h-5 w-5 xs:h-6 xs:w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 mr-2 sm:mr-3 text-indigo-600" />
               Our Mission
             </h2>
-            <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
               In an age where <span className="font-semibold text-rose-600 dark:text-rose-400">misinformation spreads faster than truth</span>, 
               TruthShield empowers individuals to make informed decisions. Our AI-powered platform analyzes news articles using advanced 
               machine learning algorithms, providing instant verification to help you distinguish fact from fiction.
@@ -69,19 +69,19 @@ const AboutPage = () => {
            transition={{ delay: 0.4 }}
            className="mb-16"
         >
-          <div className="relative overflow-hidden bg-white dark:bg-[#151525] border border-gray-200 dark:border-blue-900/30 rounded-3xl p-10 shadow-xl transition-colors duration-300">
+          <div className="relative overflow-hidden bg-white dark:bg-[#151525] border border-gray-200 dark:border-blue-900/30 rounded-2xl sm:rounded-3xl p-4 xs:p-5 sm:p-6 md:p-10 shadow-xl transition-colors duration-300">
             {/* Background decorations - Subtle glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full dark:bg-blue-900/10 blur-3xl rounded-full"></div>
 
             <div className="relative z-10 text-center">
-              <h2 className="text-3xl font-black mb-6 text-gray-900 dark:text-white">
+              <h2 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-black mb-4 sm:mb-6 text-gray-900 dark:text-white">
                 Get in Touch
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 text-lg mb-10 max-w-2xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
                 Have questions about our AI detection methodology or want to report a bug? We'd love to hear from you.
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 max-w-4xl mx-auto">
                 <motion.div 
                   whileHover={{ y: -5 }}
                   className="bg-gray-50 dark:bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-gray-200 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 transition-all cursor-pointer shadow-lg group"
@@ -133,11 +133,11 @@ const AboutPage = () => {
           transition={{ delay: 0.8 }}
           className="mb-16"
         >
-          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
+          <h2 className="text-2xl xs:text-3xl sm:text-3xl md:text-4xl font-black text-center mb-8 sm:mb-10 md:mb-12 bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
             How It Works
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {[
               { step: '1', title: 'Submit Article', desc: 'Paste any news article text into our analyzer', icon: '📝' },
               { step: '2', title: 'AI Processing', desc: 'Our ML model analyzes patterns and linguistic features', icon: '🤖' },
@@ -171,7 +171,7 @@ const AboutPage = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"
+          className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-10 sm:mb-12 md:mb-16"
         >
           {[
             { value: '99%', label: 'Accuracy Rate', gradient: 'from-green-500 to-emerald-500' },
@@ -184,9 +184,9 @@ const AboutPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.3 + idx * 0.1 }}
               whileHover={{ scale: 1.05 }}
-              className="text-center p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 shadow-xl border border-gray-200 dark:border-gray-700"
+              className="text-center p-4 xs:p-5 sm:p-6 md:p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 shadow-xl border border-gray-200 dark:border-gray-700"
             >
-              <div className={`text-5xl font-black bg-gradient-to-r ${stat.gradient} text-transparent bg-clip-text mb-2`}>
+              <div className={`text-3xl xs:text-4xl sm:text-4xl md:text-5xl font-black bg-gradient-to-r ${stat.gradient} text-transparent bg-clip-text mb-1 sm:mb-2`}>
                 {stat.value}
               </div>
               <div className="text-gray-600 dark:text-gray-400 font-semibold">
@@ -207,7 +207,7 @@ const AboutPage = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => window.location.href = '/'}
-            className="px-10 py-5 bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 text-white font-bold text-lg rounded-full shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300"
+            className="px-6 py-3 xs:px-7 xs:py-3.5 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 text-white font-bold text-sm sm:text-base md:text-lg rounded-full shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300"
           >
             Try TruthShield Now ✨
           </motion.button>

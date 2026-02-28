@@ -59,7 +59,7 @@ const VerifyCard = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="max-w-4xl mx-auto p-2 xs:p-3 sm:p-6 lg:p-8">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -69,22 +69,22 @@ const VerifyCard = () => {
         {/* Glowing border effect */}
         <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500 rounded-2xl blur opacity-10 group-hover:opacity-30 transition duration-1000"></div>
         
-        <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-purple-200 dark:border-indigo-900/50">
+        <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-2xl p-4 xs:p-5 sm:p-6 md:p-8 border border-purple-200 dark:border-indigo-900/50">
           <form onSubmit={handleSubmit}>
             {/* Header */}
-            <div className="text-center mb-6">
+            <div className="text-center mb-4 xs:mb-5 sm:mb-6">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 200 }}
-                className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 mb-4 shadow-lg shadow-purple-500/30"
+                className="inline-flex items-center justify-center w-10 h-10 xs:w-11 xs:h-11 sm:w-13 sm:h-13 md:w-16 md:h-16 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 mb-2.5 xs:mb-3 sm:mb-4 shadow-lg shadow-purple-500/30"
               >
-                <DocumentTextIcon className="h-8 w-8 text-white" />
+                <DocumentTextIcon className="h-5 w-5 xs:h-5.5 xs:w-5.5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-white" />
               </motion.div>
-              <h2 className="text-3xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-2">
+              <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-1 sm:mb-2 leading-tight">
                 Analyze News Article
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-xs xs:text-sm max-w-xs xs:max-w-sm sm:max-w-none mx-auto leading-relaxed">
                 Paste any news article below and let our AI verify its authenticity
               </p>
             </div>
@@ -95,7 +95,7 @@ const VerifyCard = () => {
                 value={text}
                 onChange={handleTextChange}
                 placeholder="📰 Paste your news article here... (minimum 50 characters)"
-                className="relative w-full h-56 p-5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none transition-all duration-300 resize-none backdrop-blur-sm font-medium"
+                className="relative w-full h-36 xs:h-40 sm:h-48 md:h-56 p-3 xs:p-3.5 sm:p-4 md:p-5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none transition-all duration-300 resize-none backdrop-blur-sm font-medium text-sm sm:text-base"
                 style={{ 
                   backgroundImage: 'linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px)',
                   backgroundSize: '20px 20px'
@@ -127,13 +127,13 @@ const VerifyCard = () => {
             </AnimatePresence>
 
             {/* Submit button */}
-            <div className="text-center mt-6">
+            <div className="text-center mt-4 xs:mt-5 sm:mt-6">
               <motion.button
                 type="submit"
                 disabled={loading}
                 whileHover={{ scale: loading ? 1 : 1.02 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
-                className={`relative px-12 py-4 rounded-xl font-bold text-lg text-white shadow-md transition-all duration-300 ${
+                className={`relative px-5 py-2.5 xs:px-6 xs:py-3 sm:px-8 sm:py-3.5 md:px-10 md:py-4 rounded-lg sm:rounded-xl font-bold text-xs xs:text-sm sm:text-base md:text-lg text-white shadow-md transition-all duration-300 ${
                   loading
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 opacity-90 hover:opacity-100'
@@ -144,15 +144,15 @@ const VerifyCard = () => {
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      className="mr-3"
+                      className="mr-2 sm:mr-3"
                     >
-                      <SparklesIcon className="h-6 w-6" />
+                      <SparklesIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                     </motion.div>
                     Analyzing Magic...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center">
-                    <SparklesIcon className="h-6 w-6 mr-2" />
+                    <SparklesIcon className="h-5 w-5 sm:h-6 sm:w-6 mr-1.5 sm:mr-2" />
                     Verify Now
                   </span>
                 )}

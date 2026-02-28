@@ -97,23 +97,23 @@ const HowItWorks: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-1 pt-20 pb-16 px-4">
+      <div className="flex-1 pt-16 sm:pt-18 md:pt-20 pb-10 sm:pb-12 md:pb-16 px-3 xs:px-4">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-4xl mx-auto text-center mb-16"
+          className="max-w-4xl mx-auto text-center mb-8 sm:mb-12 md:mb-16"
         >
-        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-400 via-purple-500 to-violet-500 text-transparent bg-clip-text">
+        <h1 className="text-3xl xs:text-4xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-indigo-400 via-purple-500 to-violet-500 text-transparent bg-clip-text">
           How It Works
         </h1>
-        <p className="text-xl text-gray-400">
+        <p className="text-base sm:text-lg md:text-xl text-gray-400">
           Discover the science behind fake news detection
         </p>
       </motion.div>
 
       {/* Process Steps */}
-      <div className="max-w-6xl mx-auto mb-20">
+      <div className="max-w-6xl mx-auto mb-12 sm:mb-16 md:mb-20">
         {steps.map((step, index) => (
           <motion.div
             key={step.title}
@@ -121,26 +121,26 @@ const HowItWorks: React.FC = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className="relative mb-12 last:mb-0"
+            className="relative mb-6 sm:mb-8 md:mb-12 last:mb-0"
           >
-            <div className="flex items-start gap-6">
+            <div className="flex items-start gap-3 xs:gap-4 sm:gap-5 md:gap-6">
               {/* Icon */}
               <div className="flex-shrink-0">
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${step.color} p-3 shadow-lg`}>
+                <div className={`w-10 h-10 xs:w-11 xs:h-11 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-r ${step.color} p-2 sm:p-2.5 md:p-3 shadow-lg`}>
                   <step.icon className="w-full h-full text-white" />
                 </div>
               </div>
 
               {/* Content */}
-              <div className="flex-1 bg-white/80 dark:bg-gray-950/50 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-6 hover:border-indigo-500/50 transition-all duration-300">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{step.title}</h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{step.description}</p>
+              <div className="flex-1 bg-white/80 dark:bg-gray-950/50 backdrop-blur-xl border border-indigo-500/20 rounded-xl sm:rounded-2xl p-3 xs:p-4 sm:p-5 md:p-6 hover:border-indigo-500/50 transition-all duration-300">
+                <h3 className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1.5 sm:mb-2 md:mb-3">{step.title}</h3>
+                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">{step.description}</p>
               </div>
             </div>
 
             {/* Connector Line */}
             {index < steps.length - 1 && (
-              <div className="absolute left-8 top-20 w-0.5 h-12 bg-gradient-to-b from-indigo-500/50 to-transparent" />
+              <div className="absolute left-5 xs:left-[1.375rem] sm:left-7 md:left-8 top-14 sm:top-16 md:top-20 w-0.5 h-6 sm:h-8 md:h-12 bg-gradient-to-b from-indigo-500/50 to-transparent" />
             )}
           </motion.div>
         ))}
@@ -153,14 +153,14 @@ const HowItWorks: React.FC = () => {
         viewport={{ once: true }}
         className="max-w-6xl mx-auto"
       >
-        <h2 className="text-4xl font-black text-center mb-4 text-gray-900 dark:text-white tracking-tight">
+        <h2 className="text-2xl xs:text-3xl sm:text-3xl md:text-4xl font-black text-center mb-3 sm:mb-4 text-gray-900 dark:text-white tracking-tight">
           Technical Deep Dive
         </h2>
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-14 text-lg max-w-2xl mx-auto">
+        <p className="text-center text-gray-500 dark:text-gray-400 mb-8 sm:mb-10 md:mb-14 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
           Under the hood — the science powering every prediction
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {technicalDetails.map((section, index) => (
             <motion.div
               key={section.title}
@@ -169,7 +169,7 @@ const HowItWorks: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: index * 0.15, type: 'spring', stiffness: 100 }}
               whileHover={{ y: -8 }}
-              className={`relative group overflow-hidden bg-white dark:bg-[#0c0e24] rounded-2xl p-8 border ${section.accentBorder} transition-all duration-500 shadow-lg hover:shadow-2xl dark:hover:shadow-indigo-500/5`}
+              className={`relative group overflow-hidden bg-white dark:bg-[#0c0e24] rounded-xl sm:rounded-2xl p-4 xs:p-5 sm:p-6 md:p-8 border ${section.accentBorder} transition-all duration-500 shadow-lg hover:shadow-2xl dark:hover:shadow-indigo-500/5`}
             >
               {/* Top gradient strip */}
               <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r ${section.gradient} opacity-60 group-hover:opacity-100 transition-opacity duration-500`}></div>
@@ -178,18 +178,18 @@ const HowItWorks: React.FC = () => {
               <div className={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${section.gradient} rounded-full blur-3xl opacity-0 group-hover:opacity-[0.07] transition-opacity duration-700`}></div>
 
               {/* Icon + Title */}
-              <div className="relative z-10 flex items-center gap-4 mb-6">
-                <div className={`w-12 h-12 rounded-xl ${section.accentBg} flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+              <div className="relative z-10 flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <div className={`w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-lg sm:rounded-xl ${section.accentBg} flex items-center justify-center text-lg xs:text-xl sm:text-xl md:text-2xl shrink-0 group-hover:scale-110 transition-transform duration-300`}>
                   {section.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight">{section.title}</h3>
+                <h3 className="text-base xs:text-lg sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight">{section.title}</h3>
               </div>
 
               {/* Divider */}
-              <div className={`h-px w-full bg-gradient-to-r ${section.gradient} opacity-20 mb-6`}></div>
+              <div className={`h-px w-full bg-gradient-to-r ${section.gradient} opacity-20 mb-4 sm:mb-6`}></div>
 
               {/* Items */}
-              <ul className="relative z-10 space-y-4">
+              <ul className="relative z-10 space-y-2.5 sm:space-y-3 md:space-y-4">
                 {section.items.map((item, i) => (
                   <motion.li
                     key={i}
@@ -204,7 +204,7 @@ const HowItWorks: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                       </svg>
                     </span>
-                    <span className="leading-relaxed text-[15px]">{item}</span>
+                    <span className="leading-relaxed text-xs xs:text-[13px] sm:text-sm md:text-[15px]">{item}</span>
                   </motion.li>
                 ))}
               </ul>
@@ -218,16 +218,16 @@ const HowItWorks: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="max-w-4xl mx-auto mt-20 text-center"
+        className="max-w-4xl mx-auto mt-12 sm:mt-16 md:mt-20 text-center"
       >
-        <div className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-500/20 rounded-2xl p-10">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Ready to Try It Out?</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">
+        <div className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-500/20 rounded-xl sm:rounded-2xl p-5 xs:p-6 sm:p-8 md:p-10">
+          <h2 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Ready to Try It Out?</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-5 sm:mb-6 md:mb-8 text-sm sm:text-base md:text-lg">
             Experience the power of AI-driven fake news detection
           </p>
           <a
             href="/"
-            className="inline-block px-10 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 hover:scale-105"
+            className="inline-block px-6 py-3 sm:px-8 sm:py-3.5 md:px-10 md:py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-sm sm:text-base md:text-lg hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 hover:scale-105"
           >
             Start Verifying Now
           </a>
