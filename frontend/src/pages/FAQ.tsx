@@ -56,10 +56,10 @@ const FAQ: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto text-center mb-16"
       >
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
           <QuestionMarkCircleIcon className="w-12 h-12 text-white" />
         </div>
-        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text">
+        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-400 via-purple-500 to-violet-500 text-transparent bg-clip-text">
           Frequently Asked Questions
         </h1>
         <p className="text-xl text-gray-400">
@@ -75,13 +75,13 @@ const FAQ: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-300"
+            className="bg-white/80 dark:bg-gray-950/50 backdrop-blur-xl border border-indigo-500/20 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition-all duration-300"
           >
             <details className="group">
-              <summary className="flex items-center justify-between cursor-pointer p-6 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors">
+              <summary className="flex items-center justify-between cursor-pointer p-6 hover:bg-gray-100/50 dark:hover:bg-gray-900/50 transition-colors">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white pr-4">{faq.question}</h3>
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center group-open:rotate-180 transition-transform">
-                  <svg className="w-4 h-4 text-purple-500 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center group-open:rotate-180 transition-transform">
+                  <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
@@ -101,14 +101,14 @@ const FAQ: React.FC = () => {
         transition={{ delay: 0.8 }}
         className="max-w-4xl mx-auto mt-16 text-center"
       >
-        <div className="bg-gradient-to-r from-purple-100/50 to-pink-100/50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-500/20 rounded-2xl p-8">
+        <div className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-500/20 rounded-2xl p-8">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Still have questions?</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Can't find the answer you're looking for? We're here to help!
           </p>
           <a 
             href="mailto:contact@truthshield.ai?subject=Support Request&body=Hello TruthShield Team,%0D%0A%0D%0AI have a question about..."
-            className="inline-block px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 hover:scale-105"
+            className="inline-block px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 hover:scale-105"
           >
             Contact Support
           </a>

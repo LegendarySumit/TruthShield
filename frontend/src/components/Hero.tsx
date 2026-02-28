@@ -9,7 +9,7 @@ const Hero = () => {
       {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+          className="absolute w-2 h-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
           animate={{
             x: [Math.random() * 100 - 50, Math.random() * 100 - 50],
             y: [Math.random() * 100 - 50, Math.random() * 100 - 50],
@@ -42,7 +42,7 @@ const Hero = () => {
           transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
           className="inline-block"
         >
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 dark:from-purple-400 dark:via-pink-400 dark:to-red-400 text-transparent bg-clip-text mb-4 bg-[length:200%_100%]">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-4 bg-[length:200%_100%]">
             Unmask the Truth
           </h1>
         </motion.div>
@@ -68,8 +68,8 @@ const Hero = () => {
         transition={{ duration: 0.8, delay: 0.5 }}
         className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed"
       >
-        In an era of <span className="font-bold text-purple-600 dark:text-purple-400">misinformation</span> and <span className="font-bold text-pink-600 dark:text-pink-400">fake news</span>, 
-        our cutting-edge AI technology helps you distinguish <span className="font-bold text-green-600 dark:text-green-400">fact from fiction</span>. 
+        In an era of <span className="font-bold text-indigo-600 dark:text-indigo-400">misinformation</span> and <span className="font-bold text-purple-600 dark:text-purple-400">fake news</span>, 
+        our cutting-edge AI technology helps you distinguish <span className="font-bold text-emerald-600 dark:text-emerald-400">fact from fiction</span>. 
         Get instant, accurate analysis of any news article.
       </motion.p>
 
@@ -82,9 +82,9 @@ const Hero = () => {
       >
         <motion.div
           whileHover={{ scale: 1.05, y: -5 }}
-          className="flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 dark:from-purple-500/30 dark:to-pink-500/30 backdrop-blur-sm border border-purple-300 dark:border-purple-500"
+          className="flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 dark:from-indigo-500/30 dark:to-purple-500/30 backdrop-blur-sm border border-indigo-300 dark:border-indigo-500"
         >
-          <ShieldCheckIcon className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+          <ShieldCheckIcon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
           <span className="font-semibold text-gray-800 dark:text-gray-200">99% Accuracy</span>
         </motion.div>
 

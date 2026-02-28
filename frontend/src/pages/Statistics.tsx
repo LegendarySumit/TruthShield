@@ -7,8 +7,8 @@ const Statistics: React.FC = () => {
   const stats = [
     { label: 'Detection Accuracy', value: '100%', icon: ShieldCheckIcon, color: 'from-green-400 to-emerald-500' },
     { label: 'Articles Analyzed', value: '800+', icon: ChartBarIcon, color: 'from-blue-400 to-cyan-500' },
-    { label: 'Training Samples', value: '640', icon: AcademicCapIcon, color: 'from-purple-400 to-pink-500' },
-    { label: 'Features Extracted', value: '1,360', icon: SparklesIcon, color: 'from-orange-400 to-red-500' },
+    { label: 'Training Samples', value: '640', icon: AcademicCapIcon, color: 'from-indigo-400 to-purple-500' },
+    { label: 'Features Extracted', value: '1,360', icon: SparklesIcon, color: 'from-purple-400 to-violet-500' },
   ];
 
   const modelDetails = [
@@ -29,7 +29,7 @@ const Statistics: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto text-center mb-16"
       >
-        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text">
+        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-400 via-purple-500 to-violet-500 text-transparent bg-clip-text">
           Model Statistics
         </h1>
         <p className="text-xl text-gray-400">
@@ -50,7 +50,7 @@ const Statistics: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl -z-10"
               style={{ background: `linear-gradient(to right, var(--tw-gradient-stops))` }}
             />
-            <div className="bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/50 transition-all duration-300">
+            <div className="bg-white/80 dark:bg-gray-950/50 backdrop-blur-xl border border-indigo-500/20 rounded-2xl p-6 hover:border-indigo-500/50 transition-all duration-300">
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${stat.color} p-2.5 mb-4`}>
                 <stat.icon className="w-full h-full text-white" />
               </div>
@@ -61,52 +61,75 @@ const Statistics: React.FC = () => {
         ))}
       </div>
 
-      {/* Model Details */}
+      {/* Model Details — Free-flow Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="max-w-4xl mx-auto"
+        className="max-w-6xl mx-auto"
       >
-        <div className="bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-8">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Technical Specifications</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {modelDetails.map((detail, index) => (
-              <motion.div
-                key={detail.label}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 + index * 0.1 }}
-                className="flex justify-between items-center p-4 bg-gray-100/50 dark:bg-gray-800/50 rounded-xl border border-gray-300/50 dark:border-gray-700/50"
-              >
-                <span className="text-gray-600 dark:text-gray-400">{detail.label}</span>
-                <span className="text-gray-900 dark:text-white font-semibold">{detail.value}</span>
-              </motion.div>
-            ))}
-          </div>
+        {/* Section header */}
+        <div className="mb-10">
+          <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-3">Technical Specifications</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-lg">Core model architecture and performance benchmarks</p>
+          <div className="mt-4 h-px w-24 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></div>
+        </div>
 
-          {/* Training Details */}
-          <div className="mt-8 p-6 bg-gradient-to-r from-purple-100/50 to-pink-100/50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-500/20">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Training Configuration</h3>
-            <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-              <li className="flex items-start">
-                <span className="text-purple-500 dark:text-purple-400 mr-2">•</span>
-                <span>Enhanced text preprocessing: lowercase, URL removal, punctuation cleaning</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-purple-500 dark:text-purple-400 mr-2">•</span>
-                <span>TF-IDF vectorization with bigrams (n-gram range: 1-2)</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-purple-500 dark:text-purple-400 mr-2">•</span>
-                <span>Balanced class weights for optimal performance</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-purple-500 dark:text-purple-400 mr-2">•</span>
-                <span>80/20 train-test split with stratification</span>
-              </li>
-            </ul>
-          </div>
+        {/* Spec grid — full width, 3-column */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+          {modelDetails.map((detail, index) => (
+            <motion.div
+              key={detail.label}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 + index * 0.08 }}
+              whileHover={{ y: -3 }}
+              className="flex justify-between items-center p-5 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-200/80 dark:border-gray-700/30 hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all duration-300 group"
+            >
+              <span className="text-gray-500 dark:text-gray-400 text-sm">{detail.label}</span>
+              <span className="text-gray-900 dark:text-white font-bold text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{detail.value}</span>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent mb-12"></div>
+
+        {/* Training Configuration — centered layout */}
+        <div className="text-center mb-10">
+          <h3 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight mb-4">Training Configuration</h3>
+          <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed max-w-2xl mx-auto">
+            Our detection model is built on a carefully crafted training pipeline. From cleaning raw news articles to producing a production-grade classifier, 
+            every step is designed to maximize accuracy while maintaining balanced performance across both real and fake news categories.
+          </p>
+          <div className="mt-5 h-px w-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full mx-auto"></div>
+        </div>
+
+        {/* Steps — centered 2-column grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          {[
+            { label: 'Text Preprocessing', desc: 'All input is lowercased, URLs are stripped, and punctuation is cleaned to normalize text before analysis.' },
+            { label: 'Vectorization', desc: 'TF-IDF converts text into numerical features using unigrams and bigrams (n-gram range: 1-2) with up to 5,000 features.' },
+            { label: 'Class Balancing', desc: 'Balanced class weights ensure the model doesn\'t favor either class — critical for unbiased fake news detection.' },
+            { label: 'Data Split', desc: 'An 80/20 stratified train-test split preserves the real/fake ratio across both sets for reliable evaluation.' },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 + i * 0.08 }}
+              whileHover={{ y: -3 }}
+              className="flex items-start gap-4 p-6 rounded-xl bg-gray-50 dark:bg-gray-800/30 border border-gray-200/80 dark:border-gray-700/30 hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all duration-300 group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-500/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                <span className="text-indigo-600 dark:text-indigo-400 text-xs font-bold">{String(i + 1).padStart(2, '0')}</span>
+              </div>
+              <div className="min-w-0">
+                <div className="font-bold text-gray-900 dark:text-white text-[15px] mb-1">{item.label}</div>
+                <div className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{item.desc}</div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </motion.div>
       </div>

@@ -19,7 +19,7 @@ const testimonials = [
     role: "News Media",
     rating: 5,
     image: "👨‍💼",
-    gradient: "from-purple-500 to-pink-500"
+    gradient: "from-indigo-500 to-purple-500"
   },
   {
     quote: "Finally, a simple and effective way to check the news my family shares on social media. This has become absolutely essential in my daily life!",
@@ -28,7 +28,7 @@ const testimonials = [
     role: "Social Media",
     rating: 5,
     image: "👩‍💻",
-    gradient: "from-orange-500 to-red-500"
+    gradient: "from-purple-500 to-violet-500"
   },
 ];
 
@@ -36,7 +36,7 @@ const Reviews = () => {
   return (
     <div className="py-20 relative overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-50/30 to-transparent dark:via-purple-900/10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-50/30 to-transparent dark:via-indigo-950/10" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -59,7 +59,7 @@ const Reviews = () => {
             ))}
           </motion.div>
           
-          <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 dark:from-purple-400 dark:via-pink-400 dark:to-red-400 text-transparent bg-clip-text mb-4">
+          <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-4">
             Loved by Thousands
           </h2>
           
@@ -82,7 +82,7 @@ const Reviews = () => {
                 transition={{ delay: idx * 0.1, type: 'spring' }}
                 className="text-center"
               >
-                <div className="text-3xl font-black bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+                <div className="text-3xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
                   {stat.value}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
@@ -185,7 +185,7 @@ const Reviews = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300"
+            className="px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300"
           >
             Try It Now - It's Free! ✨
           </motion.button>
