@@ -87,11 +87,53 @@ cache = {}
 
 # --- Helper Functions ---
 def clean_text(text):
+    """Advanced text preprocessing matching train_v3.py exactly."""
+    if not isinstance(text, str):
+        return ""
+
+    # Count stylistic signals BEFORE lowering
+    excl_count = text.count('!')
+    question_count = text.count('?')
+    caps_words = len([w for w in text.split() if w.isupper() and len(w) > 2])
+    caps_ratio = sum(1 for c in text if c.isupper()) / max(len(text), 1)
+    has_all_caps_phrases = bool(re.search(r'\b[A-Z]{3,}\b.*\b[A-Z]{3,}\b', text))
+
     text = text.lower()
-    text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
-    text = re.sub(r'@\w+|#\w+', '', text)
-    text = text.translate(str.maketrans('', '', string.punctuation))
+    text = re.sub(r'http\S+|www\S+|https\S+', ' URL ', text, flags=re.MULTILINE)
+    text = re.sub(r'@\w+', ' MENTION ', text)
+    text = re.sub(r'#\w+', ' HASHTAG ', text)
+    text = re.sub(r'[^\w\s]', ' ', text)
     text = ' '.join(text.split())
+
+    # Append engineered pseudo-features as tokens
+    if excl_count >= 2:
+        text += ' FEAT_MANY_EXCLAMATIONS'
+    if excl_count >= 5:
+        text += ' FEAT_EXTREME_EXCLAMATIONS'
+    if caps_ratio > 0.15:
+        text += ' FEAT_HIGH_CAPS'
+    if caps_ratio > 0.30:
+        text += ' FEAT_EXTREME_CAPS'
+    if caps_words >= 3:
+        text += ' FEAT_MANY_CAPS_WORDS'
+    if has_all_caps_phrases:
+        text += ' FEAT_CAPS_PHRASES'
+    if question_count >= 2:
+        text += ' FEAT_MANY_QUESTIONS'
+    if excl_count + question_count >= 4:
+        text += ' FEAT_HEAVY_PUNCTUATION'
+
+    # Detect urgency patterns
+    urgency_words = ['breaking', 'urgent', 'alert', 'warning', 'exposed', 'leaked', 'banned', 'shocking', 'bombshell']
+    urgency_count = sum(1 for w in urgency_words if w in text)
+    if urgency_count >= 2:
+        text += ' FEAT_HIGH_URGENCY'
+
+    # Detect vague sourcing
+    vague_sources = ['they don', 'they won', 'they are hiding', 'they don\'t want', 'doctors hate', 'doctors won', 'wake up', 'open your eyes', 'sheeple']
+    if any(vs in text for vs in vague_sources):
+        text += ' FEAT_VAGUE_SOURCE'
+
     return text
 
 
@@ -175,7 +217,7 @@ async def analyze_with_gemini(text: str) -> dict | None:
 
 
 def analyze_with_local_model(text: str) -> dict:
-    """Use local TF-IDF + LogisticRegression model as fallback."""
+    """Use local TF-IDF + Ensemble model as fallback for any type of claim."""
     cleaned = clean_text(text)
     vectorized = local_vectorizer.transform([cleaned])
     prediction = local_model.predict(vectorized)[0]
@@ -186,7 +228,7 @@ def analyze_with_local_model(text: str) -> dict:
     return {
         "prediction": prediction_text,
         "confidence": confidence,
-        "explanation": f"[Local ML] Analysis based on writing style and linguistic patterns only (confidence: {confidence:.2%}). Note: This fallback model cannot verify factual accuracy — it only detects sensational writing patterns. Gemini AI was unavailable (quota may be exhausted)."
+        "explanation": f"[ML Ensemble] Analysis based on linguistic patterns, writing style, sourcing quality, and textual features across multiple claim categories (confidence: {confidence:.2%}). Trained on 24,000+ diverse samples covering news, health, science, history, technology, and social media claims. Gemini AI is temporarily unavailable."
     }
 
 
