@@ -23,11 +23,11 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative mt-20 bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white overflow-hidden">
+    <footer className="relative mt-20 bg-gradient-to-br from-gray-950 via-indigo-950 to-gray-950 text-white overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-10">
         <motion.div
-          className="absolute top-0 left-0 w-64 h-64 bg-purple-500 rounded-full blur-3xl opacity-50"
+          className="absolute top-0 left-0 w-64 h-64 bg-indigo-600 rounded-full blur-3xl opacity-50"
           animate={{
             x: [0, 100, 0],
             y: [0, 50, 0],
@@ -35,7 +35,7 @@ const Footer = () => {
           transition={{ duration: 20, repeat: Infinity }}
         />
         <motion.div
-          className="absolute bottom-0 right-0 w-64 h-64 bg-pink-500 rounded-full blur-3xl opacity-50"
+          className="absolute bottom-0 right-0 w-64 h-64 bg-violet-600 rounded-full blur-3xl opacity-50"
           animate={{
             x: [0, -100, 0],
             y: [0, -50, 0],
@@ -55,9 +55,9 @@ const Footer = () => {
               viewport={{ once: true }}
               className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4"
             >
-              <ShieldCheckIcon className="h-8 w-8 sm:h-10 sm:w-10 text-purple-400 flex-shrink-0" />
+              <ShieldCheckIcon className="h-8 w-8 sm:h-10 sm:w-10 text-indigo-400 flex-shrink-0" />
               <div>
-                <h3 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 text-transparent bg-clip-text">
+                <h3 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-indigo-400 via-purple-400 to-violet-400 text-transparent bg-clip-text">
                   TruthShield
                 </h3>
                 <p className="text-[10px] sm:text-xs text-gray-400">AI-Powered Verification</p>
@@ -67,7 +67,7 @@ const Footer = () => {
               Empowering truth in the digital age. Our advanced AI technology helps millions 
               distinguish fact from fiction, making the internet a safer place for everyone.
             </p>
-            <div className="flex items-start sm:items-center space-x-2 text-xs sm:text-sm text-purple-300">
+            <div className="flex items-start sm:items-center space-x-2 text-xs sm:text-sm text-indigo-300">
               <ShieldCheckIcon className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0 mt-0.5 sm:mt-0" />
               <span className="break-words">99% Accuracy • 50K+ Active Users • 1M+ Articles Verified</span>
             </div>
@@ -75,7 +75,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="col-span-1">
-            <h4 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 bg-gradient-to-r from-purple-400 to-pink-400 text-transparent bg-clip-text">
+            <h4 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text">
               Quick Links
             </h4>
             <ul className="space-y-1.5 sm:space-y-2">
@@ -93,7 +93,7 @@ const Footer = () => {
 
           {/* Resources */}
           <div className="col-span-1">
-            <h4 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 bg-gradient-to-r from-pink-400 to-red-400 text-transparent bg-clip-text">
+            <h4 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 bg-gradient-to-r from-purple-400 to-violet-400 text-transparent bg-clip-text">
               Resources
             </h4>
             <ul className="space-y-1.5 sm:space-y-2">
@@ -127,7 +127,7 @@ const Footer = () => {
               transition={{ duration: 1, repeat: Infinity }}
               className="mx-1"
             >
-              <HeartIcon className="h-3 w-3 sm:h-4 sm:w-4 text-red-500 inline" />
+              <HeartIcon className="h-3 w-3 sm:h-4 sm:w-4 text-rose-500 inline" />
             </motion.span>
             for a better internet
           </motion.p>

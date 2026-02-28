@@ -35,21 +35,20 @@ const ResultCard = ({ result }: ResultCardProps) => {
       <div className="relative">
         <motion.div
           animate={{
-            opacity: [0.5, 0.8, 0.5],
-            scale: [1, 1.02, 1],
+            opacity: [0.2, 0.35, 0.2],
           }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className={`absolute -inset-1 rounded-3xl blur-xl ${
+          transition={{ duration: 3, repeat: Infinity }}
+          className={`absolute -inset-0.5 rounded-3xl blur-lg ${
             isReal
-              ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500'
-              : 'bg-gradient-to-r from-red-500 via-pink-500 to-orange-500'
+              ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 opacity-30'
+              : 'bg-gradient-to-r from-red-600 via-rose-600 to-slate-600 opacity-25'
           }`}
         />
 
         <div className={`relative rounded-3xl p-8 shadow-2xl backdrop-blur-xl border-2 ${
           isReal
-            ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 border-green-200 dark:border-green-800'
-            : 'bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-950/50 dark:to-pink-950/50 border-red-200 dark:border-red-800'
+            ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 border-green-200 dark:border-green-800/50'
+            : 'bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/30 dark:to-rose-900/30 border-red-200 dark:border-red-800/50'
         }`}>
           
           {/* Header Section */}
@@ -61,8 +60,8 @@ const ResultCard = ({ result }: ResultCardProps) => {
                 transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
                 className={`p-4 rounded-2xl ${
                   isReal
-                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg shadow-green-500/50'
-                    : 'bg-gradient-to-br from-red-500 to-pink-500 shadow-lg shadow-red-500/50'
+                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg shadow-green-500/30'
+                    : 'bg-gradient-to-br from-red-600 to-rose-600 shadow-lg shadow-red-500/30'
                 }`}
               >
                 {isReal ? (
@@ -83,8 +82,8 @@ const ResultCard = ({ result }: ResultCardProps) => {
                   </p>
                   <h3 className={`text-4xl font-black ${
                     isReal
-                      ? 'bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400'
-                      : 'bg-gradient-to-r from-red-600 to-pink-600 dark:from-red-400 dark:to-pink-400'
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 dark:from-green-400 dark:to-emerald-400'
+                      : 'bg-gradient-to-r from-red-500 to-rose-600 dark:from-red-400 dark:to-rose-400'
                   } text-transparent bg-clip-text`}>
                     {result.prediction}
                   </h3>

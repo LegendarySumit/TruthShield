@@ -6,7 +6,7 @@ import ResultCard from './ResultCard';
 import type { PredictionResult } from '../types';
 import { DocumentTextIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
-const API_URL = 'https://truthshield-q21g.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001';
 
 const VerifyCard = () => {
   const [text, setText] = useState('');
@@ -47,7 +47,7 @@ const VerifyCard = () => {
         setError(`Server error: ${err.response.data.detail || 'Unable to analyze text'}`);
       } else if (err.request) {
         // Request made but no response
-        setError('Cannot connect to server. Please make sure the backend is running on http://localhost:8000');
+        setError('Cannot connect to server. Please make sure the backend is running.');
       } else {
         // Something else went wrong
         setError('An unexpected error occurred. Please try again.');
@@ -67,9 +67,9 @@ const VerifyCard = () => {
         className="relative"
       >
         {/* Glowing border effect */}
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-2xl blur opacity-10 group-hover:opacity-30 transition duration-1000"></div>
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500 rounded-2xl blur opacity-10 group-hover:opacity-30 transition duration-1000"></div>
         
-        <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-purple-200 dark:border-purple-800">
+        <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-purple-200 dark:border-indigo-900/50">
           <form onSubmit={handleSubmit}>
             {/* Header */}
             <div className="text-center mb-6">
@@ -77,11 +77,11 @@ const VerifyCard = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 200 }}
-                className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 mb-4 shadow-lg shadow-purple-500/50"
+                className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 mb-4 shadow-lg shadow-purple-500/30"
               >
                 <DocumentTextIcon className="h-8 w-8 text-white" />
               </motion.div>
-              <h2 className="text-3xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 dark:from-purple-400 dark:via-pink-400 dark:to-red-400 text-transparent bg-clip-text mb-2">
+              <h2 className="text-3xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-2">
                 Analyze News Article
               </h2>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
@@ -91,18 +91,13 @@ const VerifyCard = () => {
 
             {/* Textarea with enhanced styling */}
             <div className="relative group">
-              <motion.div
-                animate={text.length > 0 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-                className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-10 group-hover:opacity-20 transition duration-500"
-              ></motion.div>
-              
               <textarea
                 value={text}
                 onChange={handleTextChange}
                 placeholder="📰 Paste your news article here... (minimum 50 characters)"
-                className="relative w-full h-56 p-5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-purple-500 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-500/15 focus:outline-none transition-all duration-300 resize-none backdrop-blur-sm font-medium"
+                className="relative w-full h-56 p-5 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none transition-all duration-300 resize-none backdrop-blur-sm font-medium"
                 style={{ 
-                  backgroundImage: 'linear-gradient(to right, rgba(168, 85, 247, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(168, 85, 247, 0.05) 1px, transparent 1px)',
+                  backgroundImage: 'linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px)',
                   backgroundSize: '20px 20px'
                 }}
               />
@@ -136,12 +131,12 @@ const VerifyCard = () => {
               <motion.button
                 type="submit"
                 disabled={loading}
-                whileHover={{ scale: loading ? 1 : 1.05 }}
-                whileTap={{ scale: loading ? 1 : 0.95 }}
-                className={`relative px-12 py-4 rounded-xl font-bold text-lg text-white shadow-xl transition-all duration-300 ${
+                whileHover={{ scale: loading ? 1 : 1.02 }}
+                whileTap={{ scale: loading ? 1 : 0.98 }}
+                className={`relative px-12 py-4 rounded-xl font-bold text-lg text-white shadow-md transition-all duration-300 ${
                   loading
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:shadow-2xl hover:shadow-purple-500/20'
+                    : 'bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 opacity-90 hover:opacity-100'
                 }`}
               >
                 {loading ? (
@@ -160,14 +155,6 @@ const VerifyCard = () => {
                     <SparklesIcon className="h-6 w-6 mr-2" />
                     Verify Now
                   </span>
-                )}
-                
-                {!loading && (
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-xl blur-lg opacity-25"
-                  />
                 )}
               </motion.button>
             </div>

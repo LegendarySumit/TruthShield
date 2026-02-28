@@ -1,41 +1,194 @@
 
 import json
+import socket
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import os
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
+import joblib
+import re
+import string
+import numpy as np
+import traceback
+
+# --- Force IPv4 for all DNS lookups ---
+# Fixes: Python prefers IPv6 which times out on some networks
+_original_getaddrinfo = socket.getaddrinfo
+
+def _ipv4_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
+    if family == 0:
+        family = socket.AF_INET  # Force IPv4
+    return _original_getaddrinfo(host, port, family, type, proto, flags)
+
+socket.getaddrinfo = _ipv4_getaddrinfo
+print("DNS forced to IPv4 (IPv6 workaround active).")
 
 # --- Configuration ---
-# Load environment variables
 load_dotenv()
 
-# Configure Gemini API
+# Configure Gemini API (Primary analysis engine)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+gemini_client = None
 if not GEMINI_API_KEY:
-    print("WARNING: GEMINI_API_KEY not found in environment variables.")
+    print("WARNING: GEMINI_API_KEY not found. Will rely on local model only.")
 else:
-    genai.configure(api_key=GEMINI_API_KEY)
+    try:
+        gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+        print("Gemini API client initialized (primary analyzer).")
+    except Exception as e:
+        print(f"WARNING: Gemini client init failed: {e}")
+
+# Model fallback chain — try each in order
+GEMINI_MODELS = [
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-3-flash-preview",
+]
+
+# --- Directories ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_DIR = os.path.join(BASE_DIR, "models")
+MODEL_PATH = os.path.join(MODEL_DIR, "model.pkl")
+VECTORIZER_PATH = os.path.join(MODEL_DIR, "vectorizer.pkl")
+
+# --- Load Local Model (secondary / fallback) ---
+USE_LOCAL_MODEL = False
+try:
+    print("Loading local model...")
+    local_model = joblib.load(MODEL_PATH)
+    local_vectorizer = joblib.load(VECTORIZER_PATH)
+    print("Local model loaded successfully (fallback analyzer).")
+    USE_LOCAL_MODEL = True
+except Exception as e:
+    print(f"WARNING: Could not load local model: {e}")
 
 # --- App Initialization ---
 app = FastAPI(
     title="Fake News Detector API",
-    description="An API to detect fake news using Gemini AI.",
-    version="1.0.0"
+    description="An API to detect fake news using Gemini AI with local ML fallback.",
+    version="2.0.0"
 )
 
 # --- CORS Middleware ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict this to your frontend's domain
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
-) 
+)
 
 # --- In-memory Cache ---
 cache = {}
+
+# --- Helper Functions ---
+def clean_text(text):
+    text = text.lower()
+    text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'@\w+|#\w+', '', text)
+    text = text.translate(str.maketrans('', '', string.punctuation))
+    text = ' '.join(text.split())
+    return text
+
+
+GEMINI_PROMPT = """You are an expert fact-checker, journalist, and misinformation analyst.
+
+Your job is to determine whether the following text is REAL (factually accurate, from a credible source) or FAKE (misinformation, fabricated, misleading, sensationalized, or factually incorrect).
+
+ANALYSIS RULES — check ALL of these:
+1. FACTUAL ACCURACY — Are the claims in the text true? If the text contains false, misleading, or unverifiable claims, classify as "Fake".
+2. SENSATIONALISM — Exaggerated language like "SHOCKING", "BREAKING", "You won't believe", all-caps, excessive exclamation marks = likely Fake.
+3. CREDIBILITY MARKERS — Real news cites sources, uses measured language, and reports verifiable events.
+4. LOGICAL CONSISTENCY — Does the text make internally consistent, logical claims?
+5. CONSPIRACY PATTERNS — Unfounded conspiracy theories, anti-science claims, cover-up narratives without evidence = Fake.
+6. SCIENTIFIC ACCURACY — Claims contradicting well-established science (flat earth, anti-vax misinformation, etc.) = Fake.
+
+Article Text:
+\"\"\"{text}\"\"\"
+
+Respond with ONLY valid JSON (no markdown, no backticks, no explanation outside JSON):
+{{"prediction": "Real" or "Fake", "confidence": float between 0.5 and 0.99, "explanation": "2-3 sentences explaining your reasoning with specific evidence from the text."}}"""
+
+
+async def analyze_with_gemini(text: str) -> dict | None:
+    """Use Gemini AI to fact-check and analyze the news text. Returns None on failure."""
+    if not gemini_client:
+        return None
+
+    prompt = GEMINI_PROMPT.format(text=text)
+
+    for model_name in GEMINI_MODELS:
+        try:
+            print(f"  Trying Gemini model: {model_name}")
+            response = gemini_client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0.1,
+                    max_output_tokens=500,
+                )
+            )
+            response_text = response.text.strip()
+
+            # Clean markdown wrappers
+            if response_text.startswith("```json"):
+                response_text = response_text[7:]
+            if response_text.startswith("```"):
+                response_text = response_text[3:]
+            if response_text.endswith("```"):
+                response_text = response_text[:-3]
+            response_text = response_text.strip()
+
+            result = json.loads(response_text)
+
+            prediction = result.get("prediction", "Fake")
+            if prediction not in ["Real", "Fake"]:
+                prediction = "Fake"
+
+            confidence = float(result.get("confidence", 0.75))
+            confidence = max(0.5, min(0.99, confidence))
+
+            explanation = result.get("explanation", "No detailed explanation available.")
+
+            print(f"  Gemini ({model_name}) result: {prediction} ({confidence:.2%})")
+            return {
+                "prediction": prediction,
+                "confidence": confidence,
+                "explanation": f"[AI Fact-Check] {explanation}"
+            }
+
+        except Exception as e:
+            error_msg = str(e)
+            print(f"  Gemini model {model_name} failed: {error_msg[:200]}")
+            # If quota exceeded, try next model
+            if "quota" in error_msg.lower() or "429" in error_msg or "rate" in error_msg.lower():
+                continue
+            # For other errors, try next model too
+            continue
+
+    print("  All Gemini models failed. Falling back to local model.")
+    return None
+
+
+def analyze_with_local_model(text: str) -> dict:
+    """Use local TF-IDF + LogisticRegression model as fallback."""
+    cleaned = clean_text(text)
+    vectorized = local_vectorizer.transform([cleaned])
+    prediction = local_model.predict(vectorized)[0]
+    probability = local_model.predict_proba(vectorized)[0]
+    confidence = float(max(probability))
+    prediction_text = "Fake" if prediction == 1 else "Real"
+
+    return {
+        "prediction": prediction_text,
+        "confidence": confidence,
+        "explanation": f"[Local ML] Analysis based on writing style and linguistic patterns only (confidence: {confidence:.2%}). Note: This fallback model cannot verify factual accuracy — it only detects sensational writing patterns. Gemini AI was unavailable (quota may be exhausted)."
+    }
+
 
 # --- Pydantic Models ---
 class NewsArticle(BaseModel):
@@ -49,81 +202,46 @@ class PredictionResponse(BaseModel):
 # --- API Endpoints ---
 @app.get("/", tags=["Health Check"])
 def read_root():
-    """Root endpoint for health checks."""
-    return {"status": "API is running"}
+    return {
+        "status": "API is running",
+        "gemini_enabled": gemini_client is not None,
+        "local_model_loaded": USE_LOCAL_MODEL,
+        "primary_analyzer": "gemini" if gemini_client else "local_model"
+    }
 
 @app.post("/predict", response_model=PredictionResponse, tags=["AI Analysis"])
 async def predict(article: NewsArticle):
-    """Predicts if a news article is real or fake using Gemini AI."""
+    """Analyze news text using Gemini AI (primary) with local ML fallback."""
     if not article.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty.")
 
-    if not GEMINI_API_KEY:
-        raise HTTPException(status_code=500, detail="Gemini API key is not configured.")
-
-    # Check cache first
+    # Check cache
     if article.text in cache:
         return cache[article.text]
 
-    try:
-        # Initialize the model
-        model = genai.GenerativeModel('gemini-2.5-flash')
-        
-        # Create the prompt
-        prompt = f"""
-        You are an expert fact-checker and journalist. Analyze the following news article text and determine if it is likely "Real" or "Fake" news.
-        
-        Article Text:
-        \"\"\"{article.text}\"\"\"
-        
-        Provide your analysis in the following JSON format exactly, with no markdown formatting or extra text:
-        {{
-            "prediction": "Real" or "Fake",
-            "confidence": a float between 0.0 and 1.0 representing your confidence,
-            "explanation": "A brief explanation of why you made this prediction, pointing out specific linguistic markers, lack of sources, sensationalism, or factual consistency."
-        }}
-        """
+    print(f"\n--- New prediction request ({len(article.text)} chars) ---")
 
-        # Generate response
-        response = model.generate_content(prompt)
-        response_text = response.text.strip()
-        
-        # Clean up potential markdown formatting from the response
-        if response_text.startswith("```json"):
-            response_text = response_text[7:]
-        if response_text.startswith("```"):
-            response_text = response_text[3:]
-        if response_text.endswith("```"):
-            response_text = response_text[:-3]
-            
-        response_text = response_text.strip()
-        
-        # Parse JSON
-        result = json.loads(response_text)
-        
-        # Validate and format the result
-        prediction_text = result.get("prediction", "Fake")
-        if prediction_text not in ["Real", "Fake"]:
-            prediction_text = "Fake"
-            
-        confidence = float(result.get("confidence", 0.5))
-        explanation = result.get("explanation", "No explanation provided.")
+    # --- PRIMARY: Gemini AI (fact-checks content + writing style) ---
+    result = await analyze_with_gemini(article.text)
 
-        # Create response
-        prediction_response = PredictionResponse(
-            prediction=prediction_text,
-            confidence=confidence,
-            explanation=explanation
+    # --- FALLBACK: Local ML model (style-based only) ---
+    if result is None and USE_LOCAL_MODEL:
+        try:
+            result = analyze_with_local_model(article.text)
+        except Exception as e:
+            print(f"  Local model also failed: {e}")
+
+    if result is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Analysis unavailable. Gemini API quota may be exhausted and local model failed. Please try again later."
         )
 
-        # Store in cache
-        if len(cache) > 100: # Simple cache eviction
-            cache.pop(next(iter(cache)))
-        cache[article.text] = prediction_response
+    response = PredictionResponse(**result)
 
-        return prediction_response
+    # Cache it
+    if len(cache) > 200:
+        cache.pop(next(iter(cache)))
+    cache[article.text] = response
 
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=500, detail="Failed to parse AI response.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return response

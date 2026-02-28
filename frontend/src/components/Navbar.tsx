@@ -5,15 +5,18 @@ import { SunIcon, MoonIcon, ShieldCheckIcon, Bars3Icon, XMarkIcon } from '@heroi
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  // Always default to true (Dark Mode) on initial load, ignoring any saved preference
+  const [darkMode, setDarkMode] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
 
@@ -50,15 +53,15 @@ const Navbar = () => {
                 transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
                 className="relative flex-shrink-0"
               >
-                <ShieldCheckIcon className="h-8 w-8 sm:h-10 sm:w-10 text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-red-500" />
+                <ShieldCheckIcon className="h-8 w-8 sm:h-10 sm:w-10 text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500" />
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-lg blur-xl opacity-30"
+                  className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500 rounded-lg blur-xl opacity-30"
                   animate={{ opacity: [0.3, 0.6, 0.3] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
               </motion.div>
               <div className="flex flex-col min-w-0">
-                <span className="text-lg sm:text-2xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 dark:from-purple-400 dark:via-pink-400 dark:to-red-400 text-transparent bg-clip-text whitespace-nowrap">
+                <span className="text-lg sm:text-2xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text whitespace-nowrap">
                   TruthShield
                 </span>
                 <span className="text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 -mt-1 hidden xs:block">
@@ -77,7 +80,7 @@ const Navbar = () => {
                   whileTap={{ scale: 0.95 }}
                   className={`px-5 py-2.5 rounded-full font-semibold transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20'
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/10'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
@@ -93,7 +96,7 @@ const Navbar = () => {
                   whileTap={{ scale: 0.95 }}
                   className={`px-5 py-2.5 rounded-full font-semibold transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20'
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/10'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
@@ -109,7 +112,7 @@ const Navbar = () => {
                   whileTap={{ scale: 0.95 }}
                   className={`px-5 py-2.5 rounded-full font-semibold transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20'
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/10'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
@@ -125,7 +128,7 @@ const Navbar = () => {
                   whileTap={{ scale: 0.95 }}
                   className={`px-5 py-2.5 rounded-full font-semibold transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20'
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/10'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
@@ -141,7 +144,7 @@ const Navbar = () => {
                   whileTap={{ scale: 0.95 }}
                   className={`px-5 py-2.5 rounded-full font-semibold transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20'
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/10'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
@@ -155,7 +158,7 @@ const Navbar = () => {
               whileHover={{ scale: 1.1, rotate: 180 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setDarkMode(!darkMode)}
-              className="p-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/10 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 ml-2"
+              className="p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/10 hover:shadow-lg transition-all duration-300 ml-2"
             >
               {darkMode ? (
                 <SunIcon className="h-5 w-5" />
@@ -172,7 +175,7 @@ const Navbar = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 sm:p-2.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20"
+              className="p-2 sm:p-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/10"
             >
               {darkMode ? (
                 <SunIcon className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -218,7 +221,7 @@ const Navbar = () => {
                     whileTap={{ scale: 0.98 }}
                     className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
                       isActive
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }`}
                   >
@@ -236,7 +239,7 @@ const Navbar = () => {
                     whileTap={{ scale: 0.98 }}
                     className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
                       isActive
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }`}
                   >
@@ -254,7 +257,7 @@ const Navbar = () => {
                     whileTap={{ scale: 0.98 }}
                     className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
                       isActive
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }`}
                   >
@@ -272,7 +275,7 @@ const Navbar = () => {
                     whileTap={{ scale: 0.98 }}
                     className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
                       isActive
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }`}
                   >
@@ -290,7 +293,7 @@ const Navbar = () => {
                     whileTap={{ scale: 0.98 }}
                     className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
                       isActive
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }`}
                   >
