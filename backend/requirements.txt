@@ -1,5 +1,8 @@
 fastapi
 uvicorn[standard]
-google-generativeai
+google-genai
 python-dotenv
 python-multipart
+scikit-learn
+numpy
+joblib
