@@ -49,26 +49,26 @@ const FAQ: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-1 pt-20 pb-16 px-4">
+      <div className="flex-1 pt-16 sm:pt-18 md:pt-20 pb-10 sm:pb-12 md:pb-16 px-3 xs:px-4">
         {/* Header */}
         <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto text-center mb-16"
+        className="max-w-4xl mx-auto text-center mb-8 sm:mb-12 md:mb-16"
       >
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
-          <QuestionMarkCircleIcon className="w-12 h-12 text-white" />
+        <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
+          <QuestionMarkCircleIcon className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" />
         </div>
-        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-400 via-purple-500 to-violet-500 text-transparent bg-clip-text">
+        <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-indigo-400 via-purple-500 to-violet-500 text-transparent bg-clip-text">
           Frequently Asked Questions
         </h1>
-        <p className="text-xl text-gray-400">
+        <p className="text-base sm:text-lg md:text-xl text-gray-400">
           Everything you need to know about TruthShield
         </p>
       </motion.div>
 
       {/* FAQ List */}
-      <div className="max-w-4xl mx-auto space-y-4">
+      <div className="max-w-4xl mx-auto space-y-2.5 sm:space-y-3 md:space-y-4">
         {faqs.map((faq, index) => (
           <motion.div
             key={index}
@@ -78,15 +78,15 @@ const FAQ: React.FC = () => {
             className="bg-white/80 dark:bg-gray-950/50 backdrop-blur-xl border border-indigo-500/20 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition-all duration-300"
           >
             <details className="group">
-              <summary className="flex items-center justify-between cursor-pointer p-6 hover:bg-gray-100/50 dark:hover:bg-gray-900/50 transition-colors">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white pr-4">{faq.question}</h3>
+              <summary className="flex items-center justify-between cursor-pointer p-3.5 xs:p-4 sm:p-5 md:p-6 hover:bg-gray-100/50 dark:hover:bg-gray-900/50 transition-colors">
+                <h3 className="text-sm xs:text-base sm:text-base md:text-lg font-semibold text-gray-900 dark:text-white pr-3 sm:pr-4">{faq.question}</h3>
                 <div className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center group-open:rotate-180 transition-transform">
                   <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </summary>
-              <div className="px-6 pb-6 text-gray-700 dark:text-gray-300 leading-relaxed border-t border-gray-300/50 dark:border-gray-800/50 pt-4">
+              <div className="px-3.5 xs:px-4 sm:px-5 md:px-6 pb-3.5 xs:pb-4 sm:pb-5 md:pb-6 text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed border-t border-gray-300/50 dark:border-gray-800/50 pt-3 sm:pt-4">
                 {faq.answer}
               </div>
             </details>
@@ -99,16 +99,16 @@ const FAQ: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
-        className="max-w-4xl mx-auto mt-16 text-center"
+        className="max-w-4xl mx-auto mt-8 sm:mt-12 md:mt-16 text-center"
       >
-        <div className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-500/20 rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Still have questions?</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <div className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-500/20 rounded-xl sm:rounded-2xl p-4 xs:p-5 sm:p-6 md:p-8">
+          <h2 className="text-lg xs:text-xl sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Still have questions?</h2>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-5 md:mb-6">
             Can't find the answer you're looking for? We're here to help!
           </p>
           <a 
             href="mailto:contact@truthshield.ai?subject=Support Request&body=Hello TruthShield Team,%0D%0A%0D%0AI have a question about..."
-            className="inline-block px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 hover:scale-105"
+            className="inline-block px-5 py-2.5 xs:px-6 xs:py-3 sm:px-7 md:px-8 md:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-sm sm:text-base hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 hover:scale-105"
           >
             Contact Support
           </a>

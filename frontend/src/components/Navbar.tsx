@@ -33,14 +33,14 @@ const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, type: 'spring' }}
-      className={`fixed w-full z-50 top-0 transition-all duration-300 ${
+      className={`fixed w-full z-50 top-0 transition-all duration-300 border-b ${
         scrolled 
-          ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg shadow-purple-500/10' 
-          : 'bg-white/60 dark:bg-gray-900/60 backdrop-blur-lg'
+          ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg shadow-purple-500/10 border-gray-200/60 dark:border-indigo-500/15' 
+          : 'bg-white/60 dark:bg-gray-900/60 backdrop-blur-lg border-gray-200/30 dark:border-gray-700/30'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+      <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
           {/* Logo with Gradient */}
           <motion.div 
             className="flex items-center space-x-2 sm:space-x-3 flex-shrink min-w-0"
@@ -169,7 +169,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Navigation */}
-          <div className="flex md:hidden items-center space-x-1.5 sm:space-x-2 flex-shrink-0">
+          <div className="flex md:hidden items-center space-x-2 xs:space-x-2.5 sm:space-x-3 flex-shrink-0">
             {/* Theme Toggle */}
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -211,7 +211,7 @@ const Navbar = () => {
             transition={{ duration: 0.3 }}
             className="md:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-purple-500/20"
           >
-            <div className="px-4 py-4 space-y-2">
+            <div className="px-3 py-3 space-y-1.5 sm:px-4 sm:py-4 sm:space-y-2">
               <NavLink 
                 to="/" 
                 onClick={() => setMobileMenuOpen(false)}
@@ -219,7 +219,7 @@ const Navbar = () => {
                 {({ isActive }) => (
                   <motion.div
                     whileTap={{ scale: 0.98 }}
-                    className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                    className={`block px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 ${
                       isActive
                         ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -237,7 +237,7 @@ const Navbar = () => {
                 {({ isActive }) => (
                   <motion.div
                     whileTap={{ scale: 0.98 }}
-                    className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                    className={`block px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 ${
                       isActive
                         ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -255,7 +255,7 @@ const Navbar = () => {
                 {({ isActive }) => (
                   <motion.div
                     whileTap={{ scale: 0.98 }}
-                    className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                    className={`block px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 ${
                       isActive
                         ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -273,7 +273,7 @@ const Navbar = () => {
                 {({ isActive }) => (
                   <motion.div
                     whileTap={{ scale: 0.98 }}
-                    className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                    className={`block px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 ${
                       isActive
                         ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -291,7 +291,7 @@ const Navbar = () => {
                 {({ isActive }) => (
                   <motion.div
                     whileTap={{ scale: 0.98 }}
-                    className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                    className={`block px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 ${
                       isActive
                         ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
