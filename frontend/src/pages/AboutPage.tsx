@@ -1,36 +1,9 @@
 
 import { motion } from 'framer-motion';
-import { SparklesIcon, CodeBracketIcon, CpuChipIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import Footer from '../components/Footer';
 
 const AboutPage = () => {
-  const technologies = [
-    {
-      category: 'Frontend',
-      icon: <CodeBracketIcon className="h-8 w-8" />,
-      items: ['React 19', 'TypeScript', 'Vite', 'TailwindCSS', 'Framer Motion'],
-      gradient: 'from-blue-500 to-cyan-500'
-    },
-    {
-      category: 'Backend',
-      icon: <CpuChipIcon className="h-8 w-8" />,
-      items: ['FastAPI', 'Python 3.13', 'Uvicorn', 'Pydantic'],
-      gradient: 'from-green-500 to-emerald-500'
-    },
-    {
-      category: 'Machine Learning',
-      icon: <SparklesIcon className="h-8 w-8" />,
-      items: ['Scikit-learn', 'Pandas', 'TF-IDF Vectorization', 'Logistic Regression', 'NumPy'],
-      gradient: 'from-purple-500 to-violet-500'
-    },
-    {
-      category: 'Deployment',
-      icon: <ShieldCheckIcon className="h-8 w-8" />,
-      items: ['Docker', 'Docker Compose', 'CORS', 'RESTful API'],
-      gradient: 'from-indigo-500 to-purple-500'
-    }
-  ];
-
   return (
     <>
       <motion.div
@@ -87,10 +60,7 @@ const AboutPage = () => {
           </div>
         </motion.div>
 
-        {/* Technologies Grid */}
-        <div className="hidden">
-           {/* Original content removed */}
-        </div>
+
 
         {/* Contact Details */}
         <motion.div
