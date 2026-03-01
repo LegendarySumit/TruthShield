@@ -15,11 +15,11 @@ const Footer = () => {
   ];
 
   const resourceLinks = [
-    { name: 'Documentation', path: '#' },
-    { name: 'Support', path: '#' },
-    { name: 'Privacy Policy', path: '#' },
-    { name: 'Terms of Service', path: '#' },
-    { name: 'Contact', path: '#' },
+    { name: 'Documentation', path: '/how-it-works' },
+    { name: 'Support', path: '/faq' },
+    { name: 'Privacy Policy', path: '/privacy' },
+    { name: 'Terms of Service', path: '/terms' },
+    { name: 'Contact', path: '/about' },
   ];
 
   return (
@@ -103,7 +103,7 @@ const Footer = () => {
                   whileHover={{ x: 3 }}
                   className="text-gray-300 hover:text-white transition-colors cursor-pointer text-xs sm:text-sm"
                 >
-                  <a href={link.path}>{link.name}</a>
+                  <Link to={link.path}>{link.name}</Link>
                 </motion.li>
               ))}
             </ul>

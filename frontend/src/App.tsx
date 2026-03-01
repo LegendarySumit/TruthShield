@@ -8,6 +8,8 @@ import AboutPage from './pages/AboutPage';
 import Statistics from './pages/Statistics';
 import FAQ from './pages/FAQ';
 import HowItWorks from './pages/HowItWorks';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -24,6 +26,8 @@ function App() {
             <Route path="/statistics" element={<Statistics />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
