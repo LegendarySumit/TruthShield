@@ -171,8 +171,8 @@ def train_model():
         stop_words="english",
         max_df=0.90,
         min_df=2,
-        ngram_range=(1, 3),
-        max_features=25000,     # More features for the larger dataset
+        ngram_range=(1, 2),   # Bigrams only (trigrams add size with little gain)
+        max_features=10000,    # Lean feature set — fast inference
         sublinear_tf=True,
         strip_accents='unicode',
     )
@@ -186,7 +186,7 @@ def train_model():
 
     lr = LogisticRegression(max_iter=3000, class_weight='balanced', C=1.0, solver='lbfgs')
     svc = CalibratedClassifierCV(LinearSVC(class_weight='balanced', max_iter=5000, C=0.5))
-    rf = RandomForestClassifier(n_estimators=300, class_weight='balanced', max_depth=None, random_state=42, n_jobs=-1)
+    rf = RandomForestClassifier(n_estimators=50, class_weight='balanced', max_depth=20, random_state=42, n_jobs=-1)
 
     ensemble = VotingClassifier(
         estimators=[('lr', lr), ('svc', svc), ('rf', rf)],
