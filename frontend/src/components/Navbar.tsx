@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { SunIcon, MoonIcon, ShieldCheckIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid';
+import { SunIcon, MoonIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
@@ -53,10 +53,14 @@ const Navbar = () => {
                 transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
                 className="relative flex-shrink-0"
               >
-                <ShieldCheckIcon className="h-8 w-8 sm:h-10 sm:w-10 text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500" />
+                <img
+                  src="/favicon.svg"
+                  alt="TruthShield logo"
+                  className="h-8 w-8 sm:h-10 sm:w-10 drop-shadow-[0_0_8px_rgba(139,92,246,0.5)]"
+                />
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500 rounded-lg blur-xl opacity-30"
-                  animate={{ opacity: [0.3, 0.6, 0.3] }}
+                  className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500 rounded-lg blur-xl opacity-20"
+                  animate={{ opacity: [0.2, 0.45, 0.2] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
               </motion.div>
