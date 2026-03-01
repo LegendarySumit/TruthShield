@@ -1,23 +1,22 @@
-import React from 'react';
 import { ShieldCheckIcon, ChartBarIcon, AcademicCapIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 import Footer from '../components/Footer';
 
-const Statistics: React.FC = () => {
+const Statistics = () => {
   const stats = [
-    { label: 'Detection Accuracy', value: '100%', icon: ShieldCheckIcon, color: 'from-green-400 to-emerald-500' },
-    { label: 'Articles Analyzed', value: '800+', icon: ChartBarIcon, color: 'from-blue-400 to-cyan-500' },
-    { label: 'Training Samples', value: '640', icon: AcademicCapIcon, color: 'from-indigo-400 to-purple-500' },
-    { label: 'Features Extracted', value: '1,360', icon: SparklesIcon, color: 'from-purple-400 to-violet-500' },
+    { label: 'Detection Accuracy', value: '99.92%', icon: ShieldCheckIcon, color: 'from-green-400 to-emerald-500' },
+    { label: 'Training Samples', value: '20K+', icon: ChartBarIcon, color: 'from-blue-400 to-cyan-500' },
+    { label: 'Training Size (Train set)', value: '16,000', icon: AcademicCapIcon, color: 'from-indigo-400 to-purple-500' },
+    { label: 'Features Extracted', value: '10,000', icon: SparklesIcon, color: 'from-purple-400 to-violet-500' },
   ];
 
   const modelDetails = [
-    { label: 'Algorithm', value: 'Logistic Regression' },
+    { label: 'Algorithm', value: 'LR + SVM + Random Forest' },
     { label: 'Vectorization', value: 'TF-IDF with Bigrams' },
-    { label: 'Precision', value: '100%' },
-    { label: 'Recall', value: '100%' },
-    { label: 'F1 Score', value: '1.0000' },
-    { label: 'Test Set Size', value: '160 articles' },
+    { label: 'Precision', value: '~99.9%' },
+    { label: 'Recall', value: '~99.9%' },
+    { label: 'F1 Score', value: '0.9992' },
+    { label: 'Test Set Size', value: '4,000 samples' },
   ];
 
   return (
@@ -109,7 +108,7 @@ const Statistics: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-4xl mx-auto">
           {[
             { label: 'Text Preprocessing', desc: 'All input is lowercased, URLs are stripped, and punctuation is cleaned to normalize text before analysis.' },
-            { label: 'Vectorization', desc: 'TF-IDF converts text into numerical features using unigrams and bigrams (n-gram range: 1-2) with up to 5,000 features.' },
+            { label: 'Vectorization', desc: 'TF-IDF converts text into numerical features using unigrams and bigrams (n-gram range: 1-2) with up to 10,000 features.' },
             { label: 'Class Balancing', desc: 'Balanced class weights ensure the model doesn\'t favor either class — critical for unbiased fake news detection.' },
             { label: 'Data Split', desc: 'An 80/20 stratified train-test split preserves the real/fake ratio across both sets for reliable evaluation.' },
           ].map((item, i) => (

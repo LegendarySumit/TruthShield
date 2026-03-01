@@ -1,6 +1,16 @@
 
 import { motion } from 'framer-motion';
 
+// Stable particle data computed once at module load — avoids re-randomising on every render
+const PARTICLES = Array.from({ length: 15 }, (_, i) => ({
+  left: `${Math.random() * 100}%`,
+  top: `${Math.random() * 100}%`,
+  animateX: Math.random() * 20 - 10,
+  duration: 3 + Math.random() * 3,
+  delay: Math.random() * 2,
+  colorClass: i % 3 === 0 ? 'bg-indigo-400' : i % 3 === 1 ? 'bg-purple-400' : 'bg-violet-400',
+}));
+
 const MotionBg = () => {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden bg-gradient-to-br from-gray-50 via-indigo-50/30 to-purple-50/30 dark:from-gray-950 dark:via-indigo-950/30 dark:to-purple-950/30">
@@ -74,28 +84,24 @@ const MotionBg = () => {
       />
 
       {/* Floating particles */}
-      {[...Array(15)].map((_, i) => (
+      {PARTICLES.map((p, i) => (
         <motion.div
           key={i}
-          className={`absolute w-1 h-1 rounded-full ${
-            i % 3 === 0 ? 'bg-indigo-400' : 
-            i % 3 === 1 ? 'bg-purple-400' : 
-            'bg-violet-400'
-          } opacity-40 dark:opacity-20`}
+          className={`absolute w-1 h-1 rounded-full ${p.colorClass} opacity-40 dark:opacity-20`}
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
+            left: p.left,
+            top: p.top,
           }}
           animate={{
             y: [0, -30, 0],
-            x: [0, Math.random() * 20 - 10, 0],
+            x: [0, p.animateX, 0],
             opacity: [0.4, 0.8, 0.4],
             scale: [1, 1.5, 1],
           }}
           transition={{
-            duration: 3 + Math.random() * 3,
+            duration: p.duration,
             repeat: Infinity,
-            delay: Math.random() * 2,
+            delay: p.delay,
           }}
         />
       ))}

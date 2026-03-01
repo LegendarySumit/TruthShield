@@ -1,9 +1,11 @@
 
 import { motion } from 'framer-motion';
 import { SparklesIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 
 const AboutPage = () => {
+  const navigate = useNavigate();
   return (
     <>
       <motion.div
@@ -69,7 +71,7 @@ const AboutPage = () => {
            transition={{ delay: 0.4 }}
            className="mb-16"
         >
-          <div className="relative overflow-hidden bg-white dark:bg-[#151525] border border-gray-200 dark:border-blue-900/30 rounded-2xl sm:rounded-3xl p-4 xs:p-5 sm:p-6 md:p-10 shadow-xl transition-colors duration-300">
+          <div className="relative overflow-hidden bg-white dark:bg-gray-950 border border-gray-200 dark:border-blue-900/30 rounded-2xl sm:rounded-3xl p-4 xs:p-5 sm:p-6 md:p-10 shadow-xl transition-colors duration-300">
             {/* Background decorations - Subtle glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full dark:bg-blue-900/10 blur-3xl rounded-full"></div>
 
@@ -206,7 +208,7 @@ const AboutPage = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => window.location.href = '/'}
+            onClick={() => navigate('/')}
             className="px-6 py-3 xs:px-7 xs:py-3.5 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 text-white font-bold text-sm sm:text-base md:text-lg rounded-full shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300"
           >
             Try TruthShield Now ✨
