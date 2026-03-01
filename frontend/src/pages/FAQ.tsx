@@ -1,13 +1,12 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import Footer from '../components/Footer';
 
-const FAQ: React.FC = () => {
+const FAQ = () => {
   const faqs = [
     {
       question: 'How accurate is TruthShield?',
-      answer: 'TruthShield achieves 100% accuracy on our test dataset of 160 articles. The model is trained on 800 balanced samples using advanced NLP techniques including TF-IDF vectorization and Logistic Regression.'
+      answer: 'TruthShield achieves ~99.92% accuracy on our test dataset of 4,000 samples. The model is trained on 20,000 balanced samples using an ensemble of Logistic Regression, SVM, and Random Forest, further augmented by Gemini AI for real-time reasoning.'
     },
     {
       question: 'What makes news "fake"?',
@@ -15,7 +14,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: 'How does the detection work?',
-      answer: 'We use Natural Language Processing (NLP) with TF-IDF (Term Frequency-Inverse Document Frequency) to analyze text patterns. The model extracts 1,360 features and uses Logistic Regression to classify news as real or fake with confidence scores.'
+      answer: 'We use Natural Language Processing (NLP) with TF-IDF (Term Frequency-Inverse Document Frequency) to extract up to 10,000 linguistic features. An ensemble model (Logistic Regression + SVM + Random Forest) classifies text as real or fake. Results are also cross-checked by Gemini AI for deeper contextual reasoning.'
     },
     {
       question: 'Can I trust the confidence score?',
@@ -35,7 +34,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: 'How often is the model updated?',
-      answer: 'We continuously improve our model with new training data and enhanced algorithms. Current version was trained with advanced preprocessing including bigram analysis and balanced class weights.'
+      answer: 'We continuously improve our model with new training data and enhanced algorithms. The current v3 ensemble was trained on 20,000 samples with advanced preprocessing — bigram analysis, balanced class weights, and an optimized Random Forest with depth-capped trees for faster inference.'
     },
     {
       question: 'What if the prediction seems wrong?',

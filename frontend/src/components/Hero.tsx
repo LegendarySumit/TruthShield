@@ -2,28 +2,37 @@
 import { motion } from 'framer-motion';
 import { SparklesIcon, ShieldCheckIcon, BoltIcon } from '@heroicons/react/24/solid';
 
+// Stable particle data computed once — prevents positions from re-randomising on every render
+const HERO_PARTICLES = Array.from({ length: 6 }, (_, i) => ({
+  animateX: [Math.random() * 100 - 50, Math.random() * 100 - 50] as [number, number],
+  animateY: [Math.random() * 100 - 50, Math.random() * 100 - 50] as [number, number],
+  duration: 3 + Math.random() * 2,
+  left: `${20 + i * 15}%`,
+  top: `${30 + (i % 3) * 20}%`,
+}));
+
 const Hero = () => {
   return (
     <div className="relative text-center py-14 xs:py-16 sm:py-20 md:py-24 px-3 xs:px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Floating particles */}
-      {[...Array(6)].map((_, i) => (
+      {HERO_PARTICLES.map((p, i) => (
         <motion.div
           key={i}
           className="absolute w-2 h-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
           animate={{
-            x: [Math.random() * 100 - 50, Math.random() * 100 - 50],
-            y: [Math.random() * 100 - 50, Math.random() * 100 - 50],
+            x: p.animateX,
+            y: p.animateY,
             opacity: [0.2, 0.8, 0.2],
             scale: [1, 1.5, 1],
           }}
           transition={{
-            duration: 3 + Math.random() * 2,
+            duration: p.duration,
             repeat: Infinity,
             delay: i * 0.3,
           }}
           style={{
-            left: `${20 + i * 15}%`,
-            top: `${30 + (i % 3) * 20}%`,
+            left: p.left,
+            top: p.top,
           }}
         />
       ))}

@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   DocumentTextIcon, 
@@ -8,9 +7,10 @@ import {
   SparklesIcon,
   ClipboardDocumentCheckIcon
 } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 import Footer from '../components/Footer';
 
-const HowItWorks: React.FC = () => {
+const HowItWorks = () => {
   const steps = [
     {
       icon: DocumentTextIcon,
@@ -27,13 +27,13 @@ const HowItWorks: React.FC = () => {
     {
       icon: BeakerIcon,
       title: '3. Feature Extraction',
-      description: 'TF-IDF (Term Frequency-Inverse Document Frequency) extracts 1,360 linguistic features including word patterns, bigrams, and statistical markers.',
+      description: 'TF-IDF (Term Frequency-Inverse Document Frequency) extracts up to 10,000 linguistic features including word patterns, bigrams, and statistical markers.',
       color: 'from-green-400 to-emerald-500'
     },
     {
       icon: ChartBarIcon,
       title: '4. ML Classification',
-      description: 'Our Logistic Regression model analyzes extracted features against 800 training samples to identify patterns common in fake vs. real news.',
+      description: 'Our ensemble model (Logistic Regression + SVM + Random Forest) analyzes extracted features across 20,000 training samples to identify patterns common in fake vs. real news.',
       color: 'from-purple-400 to-violet-500'
     },
     {
@@ -62,7 +62,7 @@ const HowItWorks: React.FC = () => {
         'Tokenization and lemmatization',
         'Stop word removal (English)',
         'N-gram analysis (unigrams + bigrams)',
-        'TF-IDF vectorization with 5000 max features'
+        'TF-IDF vectorization with 10,000 max features'
       ]
     },
     {
@@ -73,9 +73,9 @@ const HowItWorks: React.FC = () => {
       accentBg: 'bg-indigo-500/10',
       accentText: 'text-indigo-400',
       items: [
-        'Algorithm: Logistic Regression',
-        'Training samples: 640 balanced articles',
-        'Test accuracy: 100% on 160 samples',
+        'Ensemble: Logistic Regression + SVM + Random Forest',
+        'Training samples: 20,000 balanced articles',
+        'Test accuracy: 99.92% on 4,000 samples',
         'Regularization: L2 with balanced class weights'
       ]
     },
@@ -225,12 +225,12 @@ const HowItWorks: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-400 mb-5 sm:mb-6 md:mb-8 text-sm sm:text-base md:text-lg">
             Experience the power of AI-driven fake news detection
           </p>
-          <a
-            href="/"
+          <Link
+            to="/"
             className="inline-block px-6 py-3 sm:px-8 sm:py-3.5 md:px-10 md:py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-sm sm:text-base md:text-lg hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 hover:scale-105"
           >
             Start Verifying Now
-          </a>
+          </Link>
         </div>
       </motion.div>
       </div>

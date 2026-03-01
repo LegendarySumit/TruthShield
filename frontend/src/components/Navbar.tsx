@@ -5,8 +5,8 @@ import { SunIcon, MoonIcon, ShieldCheckIcon, Bars3Icon, XMarkIcon } from '@heroi
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
-  // Always default to true (Dark Mode) on initial load, ignoring any saved preference
-  const [darkMode, setDarkMode] = useState(true);
+  // Read saved preference; fall back to dark if nothing is stored
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') !== 'light');
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
