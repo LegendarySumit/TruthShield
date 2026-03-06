@@ -1,6 +1,6 @@
 
 import { motion } from 'framer-motion';
-import { SparklesIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon, ShieldCheckIcon, DocumentTextIcon, CpuChipIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 
@@ -21,15 +21,11 @@ const AboutPage = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-12 md:mb-16"
         >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="inline-block mb-6"
-          >
+          <div className="inline-block mb-6">
             <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 flex items-center justify-center shadow-2xl shadow-indigo-500/50">
               <ShieldCheckIcon className="h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 text-white" />
             </div>
-          </motion.div>
+          </div>
 
           <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 dark:from-indigo-400 dark:via-purple-400 dark:to-violet-400 text-transparent bg-clip-text mb-4 sm:mb-6">
             About TruthShield
@@ -83,7 +79,7 @@ const AboutPage = () => {
                 Have questions about our AI detection methodology or want to report a bug? We'd love to hear from you.
               </p>
               
-              <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 max-w-4xl mx-auto">
                 <motion.div 
                   whileHover={{ y: -5 }}
                   className="bg-gray-50 dark:bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-gray-200 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 transition-all cursor-pointer shadow-lg group"
@@ -139,28 +135,30 @@ const AboutPage = () => {
             How It Works
           </h2>
           
-          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {[
-              { step: '1', title: 'Submit Article', desc: 'Paste any news article text into our analyzer', icon: '📝' },
-              { step: '2', title: 'AI Processing', desc: 'Our ML model analyzes patterns and linguistic features', icon: '🤖' },
-              { step: '3', title: 'Get Results', desc: 'Receive instant verdict with confidence score', icon: '✅' }
+              { step: '1', title: 'Submit Article', desc: 'Paste any news article text into our analyzer', Icon: DocumentTextIcon, gradient: 'from-indigo-500 to-blue-500', ring: 'ring-indigo-500/20' },
+              { step: '2', title: 'AI Processing', desc: 'Our ML model analyzes patterns and linguistic features', Icon: CpuChipIcon, gradient: 'from-purple-500 to-violet-500', ring: 'ring-purple-500/20' },
+              { step: '3', title: 'Get Results', desc: 'Receive instant verdict with confidence score', Icon: CheckBadgeIcon, gradient: 'from-emerald-500 to-green-500', ring: 'ring-emerald-500/20' }
             ].map((item, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.9 + idx * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                className="text-center"
+                whileHover={{ scale: 1.03, y: -4 }}
+                className="text-center p-5 sm:p-6 rounded-2xl bg-gray-50 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700/40 hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-all duration-300"
               >
-                <div className="text-6xl mb-4">{item.icon}</div>
-                <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400 mb-2">
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${item.gradient} p-3.5 mx-auto mb-4 shadow-lg ring-4 ${item.ring}`}>
+                  <item.Icon className="w-full h-full text-white" />
+                </div>
+                <div className="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-1">
                   Step {item.step}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                   {item.desc}
                 </p>
               </motion.div>
@@ -173,7 +171,7 @@ const AboutPage = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2 }}
-          className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-10 sm:mb-12 md:mb-16"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-10 sm:mb-12 md:mb-16"
         >
           {[
             { value: '99%', label: 'Accuracy Rate', gradient: 'from-green-500 to-emerald-500' },
