@@ -37,7 +37,7 @@ const Statistics = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3 xs:gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-12 md:mb-16 px-1 xs:px-0">
+      <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6 mb-8 sm:mb-12 md:mb-16 px-1 xs:px-0">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
@@ -75,7 +75,7 @@ const Statistics = () => {
         </div>
 
         {/* Spec grid — full width, 3-column */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-2.5 xs:gap-3 sm:gap-4 mb-8 sm:mb-10 md:mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 mb-8 sm:mb-10 md:mb-12">
           {modelDetails.map((detail, index) => (
             <motion.div
               key={detail.label}
@@ -83,10 +83,10 @@ const Statistics = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 + index * 0.08 }}
               whileHover={{ y: -3 }}
-              className="flex justify-between items-center p-3 xs:p-3.5 sm:p-4 md:p-5 bg-gray-50 dark:bg-gray-800/40 rounded-lg sm:rounded-xl border border-gray-200/80 dark:border-gray-700/30 hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all duration-300 group"
+              className="flex sm:justify-between sm:items-center flex-col sm:flex-row gap-1 sm:gap-3 p-3.5 sm:p-4 md:p-5 bg-gray-50 dark:bg-gray-800/40 rounded-lg sm:rounded-xl border border-gray-200/80 dark:border-gray-700/30 hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all duration-300 group"
             >
-              <span className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{detail.label}</span>
-              <span className="text-gray-900 dark:text-white font-bold text-xs sm:text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{detail.value}</span>
+              <span className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-snug">{detail.label}</span>
+              <span className="text-gray-900 dark:text-white font-bold text-sm sm:text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors sm:text-right">{detail.value}</span>
             </motion.div>
           ))}
         </div>

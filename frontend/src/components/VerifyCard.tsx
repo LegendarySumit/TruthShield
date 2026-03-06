@@ -6,7 +6,7 @@ import ResultCard from './ResultCard';
 import type { PredictionResult } from '../types';
 import { DocumentTextIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const VerifyCard = () => {
   const [text, setText] = useState('');
@@ -141,14 +141,25 @@ const VerifyCard = () => {
               >
                 {loading ? (
                   <span className="flex items-center">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      className="mr-2 sm:mr-3"
+                    <svg
+                      className="animate-spin h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
                     >
-                      <SparklesIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-                    </motion.div>
-                    Analyzing Magic...
+                      <circle
+                        className="opacity-25"
+                        cx="12" cy="12" r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      />
+                    </svg>
+                    Analyzing...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center">
