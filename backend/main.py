@@ -7,7 +7,7 @@ import socket
 import threading
 import time
 from collections import defaultdict, deque
-from typing import Optional
+from typing import Annotated, Optional
 
 import httpx
 import joblib
@@ -20,7 +20,7 @@ from fastapi.responses import JSONResponse
 from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 from starlette.middleware.base import BaseHTTPMiddleware
 
 try:
@@ -50,9 +50,11 @@ class Settings(BaseSettings):
 
     environment: str = "development"
     force_https: bool = False
-    trusted_hosts: list[str] = Field(default_factory=lambda: ["localhost", "127.0.0.1"])
+    trusted_hosts: Annotated[list[str], NoDecode] = Field(default_factory=lambda: ["localhost", "127.0.0.1"])
 
-    cors_allow_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173", "http://127.0.0.1:5173"])
+    cors_allow_origins: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["http://localhost:5173", "http://127.0.0.1:5173"]
+    )
     cors_allow_credentials: bool = False
     cors_dev_allow_all: bool = True
 
@@ -80,7 +82,7 @@ class Settings(BaseSettings):
     cache_max_items: int = 200
 
     gemini_api_key: str = ""
-    gemini_models: list[str] = Field(
+    gemini_models: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: [
             "gemini-2.5-flash",
             "gemini-2.0-flash",
@@ -93,7 +95,18 @@ class Settings(BaseSettings):
     @classmethod
     def split_list_values(cls, value):
         if isinstance(value, str):
-            return [item.strip() for item in value.split(",") if item.strip()]
+            text = value.strip()
+            if not text:
+                return []
+            if text.startswith("["):
+                try:
+                    parsed = json.loads(text)
+                    if isinstance(parsed, list):
+                        return [str(item).strip() for item in parsed if str(item).strip()]
+                except json.JSONDecodeError:
+                    # Fall back to CSV parsing for operator mistakes in env values.
+                    pass
+            return [item.strip() for item in text.split(",") if item.strip()]
         return value
 
     @field_validator("environment", mode="before")
