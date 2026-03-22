@@ -1,24 +1,31 @@
 
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+FROM python:3.11-slim AS builder
 
-# Set the working directory in the container
 WORKDIR /app
-
-# Copy the dependencies file to the working directory
 COPY ./backend/requirements.txt .
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m venv /opt/venv \
+		&& /opt/venv/bin/pip install --upgrade pip \
+		&& /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Copy the content of the local src directory to the working directory
+
+FROM python:3.11-slim AS runtime
+
+ENV PATH="/opt/venv/bin:$PATH"
+WORKDIR /app
+
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+COPY --from=builder /opt/venv /opt/venv
 COPY ./backend/ .
 
-# Make port 8000 available to the world outside this container
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
 EXPOSE 8000
 
-# Define environment variable
-ENV NAME World
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+	CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)" || exit 1
 
-# Run app.py when the container launches
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

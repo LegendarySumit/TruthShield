@@ -1,21 +1,24 @@
 
-# Use an official Node.js runtime as a parent image
-FROM node:18-alpine
+FROM node:20-alpine AS builder
 
-# Set the working directory in the container
 WORKDIR /app
-
-# Copy package.json and package-lock.json to the working directory
 COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
 
-# Install any needed packages
-RUN npm install
 
-# Copy the rest of the frontend code
-COPY frontend/ .
+FROM nginx:1.27-alpine AS runtime
 
-# Make port 5173 available to the world outside this container
-EXPOSE 5173
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Run the app when the container launches
-CMD ["npm", "run", "dev", "--", "--host"]
+RUN chown -R nginx:nginx /usr/share/nginx/html
+USER nginx
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+	CMD wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -69,6 +69,40 @@ http://localhost:5173
 
 ---
 
+## 🧭 P1 Operational Readiness
+
+### Observability
+
+- Structured JSON logging with request and trace IDs.
+- `/metrics` endpoint for Prometheus scraping (request count, latency, 5xx, fallback counters).
+- Optional Sentry integration via `SENTRY_DSN`.
+- Built-in threshold alerts in logs for high latency and elevated 5xx rates.
+
+### Gemini Resilience
+
+- Configurable timeout/retries/jitter (`GEMINI_*` env vars).
+- Circuit breaker on repeated Gemini failures.
+- Explicit Gemini success and local fallback metrics.
+- Bounded TTL cache for repeated requests.
+
+### Model Lifecycle
+
+- Versioned response field `model_version`.
+- Training now emits:
+    - `backend/models/model_metadata.json`
+    - `backend/models/evaluation_report.json`
+- Startup integrity checks validate model/vectorizer interface compatibility and runtime/training version alignment.
+
+### Drift Monitoring Plan
+
+1. Capture weekly aggregate prediction distributions and confidence buckets.
+2. Compare with baseline ranges from the last stable evaluation report.
+3. Trigger retraining if drift exceeds threshold for 2 consecutive windows.
+4. Re-run training and publish updated metadata/evaluation artifacts.
+5. Promote only after staging smoke checks pass.
+
+---
+
 ## 🏗️ Project Structure
 
 ```

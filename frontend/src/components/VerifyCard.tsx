@@ -184,11 +184,16 @@ const VerifyCard = () => {
 
       const response = await axios.post(`${API_URL}/predict`, payload);
       setResult(response.data);
-    } catch (err: any) {
-      if (err.response) {
+    } catch (err: unknown) {
+      const axiosErr = err as {
+        response?: { data?: { error?: string; message?: string } };
+        request?: unknown;
+      };
+
+      if (axiosErr.response) {
         // Server responded with error
-        const apiError = err.response.data?.error;
-        const apiMessage = err.response.data?.message || 'Unable to analyze text';
+        const apiError = axiosErr.response.data?.error;
+        const apiMessage = axiosErr.response.data?.message || 'Unable to analyze text';
         setError(`Server error: ${apiMessage}`);
 
         if (apiError === 'captcha_required' || apiError === 'captcha_failed') {
@@ -200,7 +205,7 @@ const VerifyCard = () => {
             turnstileWidgetIdRef.current = null;
           }
         }
-      } else if (err.request) {
+      } else if (axiosErr.request) {
         // Request made but no response
         setError('Cannot connect to server. Please make sure the backend is running.');
       } else {

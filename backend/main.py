@@ -1,7 +1,10 @@
 
+import asyncio
+import contextvars
 import json
 import logging
 import os
+import random
 import re
 import socket
 import threading
@@ -11,7 +14,7 @@ from typing import Annotated, Optional
 
 import httpx
 import joblib
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
@@ -24,9 +27,27 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 from starlette.middleware.base import BaseHTTPMiddleware
 
 try:
+    import sentry_sdk
+except Exception:
+    sentry_sdk = None
+
+try:
+    from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
+except Exception:
+    CONTENT_TYPE_LATEST = "text/plain; version=0.0.4"
+    Counter = None
+    Histogram = None
+    generate_latest = None
+
+try:
     import psutil
 except Exception:
     psutil = None
+
+try:
+    import sklearn
+except Exception:
+    sklearn = None
 
 # --- Force IPv4 for all DNS lookups ---
 # Fixes: Python prefers IPv6 which times out on some networks
@@ -39,7 +60,32 @@ def _ipv4_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
 
 socket.getaddrinfo = _ipv4_getaddrinfo
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+request_id_ctx_var: contextvars.ContextVar[str] = contextvars.ContextVar("request_id", default="-")
+trace_id_ctx_var: contextvars.ContextVar[str] = contextvars.ContextVar("trace_id", default="-")
+
+
+class JsonLogFormatter(logging.Formatter):
+    def format(self, record: logging.LogRecord) -> str:
+        payload = {
+            "ts": self.formatTime(record, "%Y-%m-%dT%H:%M:%S"),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+            "request_id": request_id_ctx_var.get(),
+            "trace_id": trace_id_ctx_var.get(),
+        }
+        return json.dumps(payload, ensure_ascii=True)
+
+
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)
+if root_logger.handlers:
+    root_logger.handlers[0].setFormatter(JsonLogFormatter())
+else:
+    handler = logging.StreamHandler()
+    handler.setFormatter(JsonLogFormatter())
+    root_logger.addHandler(handler)
+
 logger = logging.getLogger("truthshield-api")
 logger.info("DNS forced to IPv4 (IPv6 workaround active).")
 START_TIME = time.time()
@@ -80,6 +126,19 @@ class Settings(BaseSettings):
         "script-src 'self'; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
     )
     cache_max_items: int = 200
+    cache_ttl_seconds: int = 900
+    model_version: str = "v3"
+
+    metrics_enabled: bool = True
+    sentry_dsn: str = ""
+    alert_latency_ms: int = 1500
+    alert_5xx_per_minute: int = 20
+
+    gemini_timeout_seconds: int = 12
+    gemini_max_retries: int = 2
+    gemini_retry_jitter_ms: int = 250
+    gemini_circuit_fail_threshold: int = 5
+    gemini_circuit_open_seconds: int = 60
 
     gemini_api_key: str = ""
     gemini_models: Annotated[list[str], NoDecode] = Field(
@@ -152,8 +211,32 @@ CAPTCHA_PROVIDER = settings.captcha_provider.strip().lower()
 CAPTCHA_SECRET_KEY = settings.captcha_secret_key.strip()
 CAPTCHA_VERIFY_URL = settings.captcha_verify_url.strip()
 CAPTCHA_TIMEOUT_SECONDS = max(1, settings.captcha_timeout_seconds)
+GEMINI_TIMEOUT_SECONDS = max(1, settings.gemini_timeout_seconds)
+GEMINI_MAX_RETRIES = max(0, settings.gemini_max_retries)
+GEMINI_RETRY_JITTER_MS = max(0, settings.gemini_retry_jitter_ms)
+GEMINI_CIRCUIT_FAIL_THRESHOLD = max(1, settings.gemini_circuit_fail_threshold)
+GEMINI_CIRCUIT_OPEN_SECONDS = max(1, settings.gemini_circuit_open_seconds)
+MODEL_VERSION = settings.model_version.strip() or "v3"
+
+METRICS_ENABLED = settings.metrics_enabled
+CACHE_TTL_SECONDS = max(1, settings.cache_ttl_seconds)
+ALERT_LATENCY_MS = max(100, settings.alert_latency_ms)
+ALERT_5XX_PER_MINUTE = max(1, settings.alert_5xx_per_minute)
 
 SECURITY_CSP = settings.security_csp.strip()
+
+if METRICS_ENABLED and Counter is not None:
+    REQUEST_COUNT = Counter("truthshield_requests_total", "Total HTTP requests", ["method", "path", "status"])
+    REQUEST_LATENCY = Histogram("truthshield_request_latency_seconds", "HTTP request latency", ["method", "path"])
+    REQUEST_ERRORS = Counter("truthshield_request_errors_total", "Total 5xx responses", ["path"])
+    GEMINI_SUCCESS = Counter("truthshield_gemini_success_total", "Successful Gemini analyses")
+    GEMINI_FALLBACK = Counter("truthshield_gemini_fallback_total", "Gemini fallback to local model")
+else:
+    REQUEST_COUNT = None
+    REQUEST_LATENCY = None
+    REQUEST_ERRORS = None
+    GEMINI_SUCCESS = None
+    GEMINI_FALLBACK = None
 
 
 class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
@@ -189,6 +272,116 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         if IS_PRODUCTION:
             response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         return response
+
+
+class RequestContextMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        request_id = request.headers.get("x-request-id") or f"req-{int(time.time() * 1000)}-{random.randint(1000,9999)}"
+        trace_id = request.headers.get("x-trace-id") or request.headers.get("traceparent", "")
+        if not trace_id:
+            trace_id = request_id
+
+        token_req = request_id_ctx_var.set(request_id)
+        token_trace = trace_id_ctx_var.set(trace_id)
+        start = time.perf_counter()
+        try:
+            response = await call_next(request)
+        finally:
+            duration = max(0.0, time.perf_counter() - start)
+            status_code = 500
+            try:
+                status_code = response.status_code  # type: ignore[name-defined]
+            except Exception:
+                pass
+            path = request.url.path
+            if REQUEST_COUNT is not None:
+                REQUEST_COUNT.labels(method=request.method, path=path, status=str(status_code)).inc()
+            if REQUEST_LATENCY is not None:
+                REQUEST_LATENCY.labels(method=request.method, path=path).observe(duration)
+            if REQUEST_ERRORS is not None and status_code >= 500:
+                REQUEST_ERRORS.labels(path=path).inc()
+
+            if duration * 1000 > ALERT_LATENCY_MS:
+                logger.warning(
+                    "High request latency detected: path=%s duration_ms=%.2f threshold_ms=%d",
+                    path,
+                    duration * 1000,
+                    ALERT_LATENCY_MS,
+                )
+
+            if status_code >= 500:
+                now = time.time()
+                recent_5xx_events.append(now)
+                while recent_5xx_events and now - recent_5xx_events[0] > 60:
+                    recent_5xx_events.popleft()
+                if len(recent_5xx_events) >= ALERT_5XX_PER_MINUTE:
+                    logger.error(
+                        "5xx alert threshold exceeded: last_minute_count=%d threshold=%d",
+                        len(recent_5xx_events),
+                        ALERT_5XX_PER_MINUTE,
+                    )
+
+            request_id_ctx_var.reset(token_req)
+            trace_id_ctx_var.reset(token_trace)
+
+        response.headers["X-Request-ID"] = request_id
+        response.headers["X-Trace-ID"] = trace_id
+        return response
+
+
+class GemininCircuitBreaker:
+    def __init__(self, fail_threshold: int, open_seconds: int):
+        self.fail_threshold = fail_threshold
+        self.open_seconds = open_seconds
+        self.fail_count = 0
+        self.open_until = 0.0
+        self.lock = threading.Lock()
+
+    def allow(self) -> bool:
+        with self.lock:
+            if self.open_until > time.time():
+                return False
+            if self.open_until > 0:
+                self.open_until = 0
+            return True
+
+    def record_success(self) -> None:
+        with self.lock:
+            self.fail_count = 0
+            self.open_until = 0.0
+
+    def record_failure(self) -> None:
+        with self.lock:
+            self.fail_count += 1
+            if self.fail_count >= self.fail_threshold:
+                self.open_until = time.time() + self.open_seconds
+
+
+class TTLCache:
+    def __init__(self, max_items: int, ttl_seconds: int):
+        self.max_items = max_items
+        self.ttl_seconds = ttl_seconds
+        self.store: dict[str, tuple[float, PredictionResponse]] = {}
+        self.lock = threading.Lock()
+
+    def get(self, key: str) -> Optional["PredictionResponse"]:
+        now = time.time()
+        with self.lock:
+            item = self.store.get(key)
+            if not item:
+                return None
+            expires_at, value = item
+            if expires_at <= now:
+                self.store.pop(key, None)
+                return None
+            return value
+
+    def set(self, key: str, value: "PredictionResponse") -> None:
+        with self.lock:
+            if len(self.store) >= self.max_items:
+                oldest_key = next(iter(self.store))
+                self.store.pop(oldest_key, None)
+            self.store[key] = (time.time() + self.ttl_seconds, value)
 
 
 class SimpleRateLimiter:
@@ -245,6 +438,8 @@ class SimpleRateLimiter:
 
 rate_limiter = SimpleRateLimiter()
 runtime_config_errors: list[str] = []
+gemini_circuit = GemininCircuitBreaker(GEMINI_CIRCUIT_FAIL_THRESHOLD, GEMINI_CIRCUIT_OPEN_SECONDS)
+recent_5xx_events: deque[float] = deque()
 
 # Configure Gemini API (Primary analysis engine)
 GEMINI_API_KEY = settings.gemini_api_key.strip()
@@ -266,21 +461,44 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, "models")
 MODEL_PATH = os.path.join(MODEL_DIR, "model.pkl")
 VECTORIZER_PATH = os.path.join(MODEL_DIR, "vectorizer.pkl")
+MODEL_METADATA_PATH = os.path.join(MODEL_DIR, "model_metadata.json")
 
 # --- Load Local Model (secondary / fallback) ---
 USE_LOCAL_MODEL = False
+MODEL_METADATA: dict = {}
+model_integrity_errors: list[str] = []
 try:
     logger.info("Loading local model...")
     local_model = joblib.load(MODEL_PATH)
     local_vectorizer = joblib.load(VECTORIZER_PATH)
+    if os.path.exists(MODEL_METADATA_PATH):
+        with open(MODEL_METADATA_PATH, "r", encoding="utf-8") as metadata_file:
+            MODEL_METADATA = json.load(metadata_file)
     logger.info("Local model loaded successfully (fallback analyzer).")
     USE_LOCAL_MODEL = True
 except Exception as e:
     logger.warning("Could not load local model: %s", e)
 
+if settings.sentry_dsn and sentry_sdk is not None:
+    sentry_sdk.init(dsn=settings.sentry_dsn, traces_sample_rate=0.05, environment=ENVIRONMENT)
+    logger.info("Sentry initialized.")
+
 
 def validate_runtime_configuration() -> None:
     errors = []
+
+    if USE_LOCAL_MODEL:
+        if not hasattr(local_model, "predict") or not hasattr(local_model, "predict_proba"):
+            errors.append("Local model artifact is incompatible: missing predict/predict_proba")
+        if not hasattr(local_vectorizer, "transform"):
+            errors.append("Vectorizer artifact is incompatible: missing transform")
+
+        trained_sklearn_version = MODEL_METADATA.get("sklearn_version")
+        runtime_sklearn_version = getattr(sklearn, "__version__", "unknown") if sklearn else "unknown"
+        if trained_sklearn_version and trained_sklearn_version != runtime_sklearn_version:
+            errors.append(
+                f"Model sklearn version mismatch: trained={trained_sklearn_version}, runtime={runtime_sklearn_version}"
+            )
 
     if MIN_TEXT_CHARS < 1:
         errors.append("MIN_TEXT_CHARS must be >= 1")
@@ -308,6 +526,7 @@ def validate_runtime_configuration() -> None:
         errors.append("No analyzer available. Configure GEMINI_API_KEY or local model artifacts.")
 
     runtime_config_errors.extend(errors)
+    model_integrity_errors.extend(errors)
     if IS_PRODUCTION and errors:
         raise RuntimeError("Invalid production configuration: " + "; ".join(errors))
 
@@ -320,6 +539,8 @@ app = FastAPI(
     description="An API to detect fake news using Gemini AI with local ML fallback.",
     version="2.0.0"
 )
+
+app.add_middleware(RequestContextMiddleware)
 
 if FORCE_HTTPS:
     app.add_middleware(HTTPSRedirectMiddleware)
@@ -348,7 +569,7 @@ app.add_middleware(
 )
 
 # --- In-memory Cache ---
-cache = {}
+cache = TTLCache(max_items=settings.cache_max_items, ttl_seconds=CACHE_TTL_SECONDS)
 
 
 def get_client_ip(request: Request) -> str:
@@ -408,6 +629,8 @@ def get_dependencies_status() -> dict:
         "gemini_client_initialized": gemini_client is not None,
         "model_files_present": model_files_present,
         "model_loaded": USE_LOCAL_MODEL,
+        "model_version": MODEL_METADATA.get("model_version", MODEL_VERSION),
+        "model_integrity_errors": model_integrity_errors,
     }
 
 # --- Helper Functions ---
@@ -486,55 +709,69 @@ async def analyze_with_gemini(text: str) -> dict | None:
     if not gemini_client:
         return None
 
+    if not gemini_circuit.allow():
+        logger.warning("Gemini circuit breaker open. Skipping Gemini call.")
+        return None
+
     prompt = GEMINI_PROMPT.format(text=text)
 
     for model_name in GEMINI_MODELS:
         try:
-            logger.info("Trying Gemini model: %s", model_name)
-            response = gemini_client.models.generate_content(
-                model=model_name,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.1,
-                    max_output_tokens=500,
+            for attempt in range(GEMINI_MAX_RETRIES + 1):
+                logger.info("Trying Gemini model: %s (attempt %d)", model_name, attempt + 1)
+                response = await asyncio.wait_for(
+                    asyncio.to_thread(
+                        gemini_client.models.generate_content,
+                        model=model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            temperature=0.1,
+                            max_output_tokens=500,
+                        ),
+                    ),
+                    timeout=GEMINI_TIMEOUT_SECONDS,
                 )
-            )
-            response_text = response.text.strip()
+                response_text = response.text.strip()
 
-            # Clean markdown wrappers
-            if response_text.startswith("```json"):
-                response_text = response_text[7:]
-            if response_text.startswith("```"):
-                response_text = response_text[3:]
-            if response_text.endswith("```"):
-                response_text = response_text[:-3]
-            response_text = response_text.strip()
+                # Clean markdown wrappers
+                if response_text.startswith("```json"):
+                    response_text = response_text[7:]
+                if response_text.startswith("```"):
+                    response_text = response_text[3:]
+                if response_text.endswith("```"):
+                    response_text = response_text[:-3]
+                response_text = response_text.strip()
 
-            result = json.loads(response_text)
+                result = json.loads(response_text)
 
-            prediction = result.get("prediction", "Fake")
-            if prediction not in ["Real", "Fake"]:
-                prediction = "Fake"
+                prediction = result.get("prediction", "Fake")
+                if prediction not in ["Real", "Fake"]:
+                    prediction = "Fake"
 
-            confidence = float(result.get("confidence", 0.75))
-            confidence = max(0.5, min(0.99, confidence))
+                confidence = float(result.get("confidence", 0.75))
+                confidence = max(0.5, min(0.99, confidence))
 
-            explanation = result.get("explanation", "No detailed explanation available.")
+                explanation = result.get("explanation", "No detailed explanation available.")
 
-            logger.info("Gemini (%s) result: %s (%.2f%%)", model_name, prediction, confidence * 100)
-            return {
-                "prediction": prediction,
-                "confidence": confidence,
-                "explanation": f"[AI Fact-Check] {explanation}"
-            }
+                gemini_circuit.record_success()
+                if GEMINI_SUCCESS is not None:
+                    GEMINI_SUCCESS.inc()
+                logger.info("Gemini (%s) result: %s (%.2f%%)", model_name, prediction, confidence * 100)
+                return {
+                    "prediction": prediction,
+                    "confidence": confidence,
+                    "explanation": f"[AI Fact-Check] {explanation}",
+                    "model_version": MODEL_VERSION,
+                }
 
         except Exception as e:
             error_msg = str(e)
+            gemini_circuit.record_failure()
             logger.warning("Gemini model %s failed: %s", model_name, error_msg[:200])
-            # If quota exceeded, try next model
-            if "quota" in error_msg.lower() or "429" in error_msg or "rate" in error_msg.lower():
-                continue
-            # For other errors, try next model too
+            retryable = "quota" in error_msg.lower() or "429" in error_msg or "rate" in error_msg.lower() or "timeout" in error_msg.lower()
+            if retryable and GEMINI_RETRY_JITTER_MS > 0:
+                jitter = random.uniform(0, GEMINI_RETRY_JITTER_MS / 1000.0)
+                await asyncio.sleep(jitter)
             continue
 
     logger.warning("All Gemini models failed. Falling back to local model.")
@@ -553,7 +790,8 @@ def analyze_with_local_model(text: str) -> dict:
     return {
         "prediction": prediction_text,
         "confidence": confidence,
-        "explanation": f"[ML Ensemble] Analysis based on linguistic patterns, writing style, sourcing quality, and textual features across multiple claim categories (confidence: {confidence:.2%}). Trained on 24,000+ diverse samples covering news, health, science, history, technology, and social media claims. Gemini AI is temporarily unavailable."
+        "explanation": f"[ML Ensemble] Analysis based on linguistic patterns, writing style, sourcing quality, and textual features across multiple claim categories (confidence: {confidence:.2%}). Trained on 24,000+ diverse samples covering news, health, science, history, technology, and social media claims. Gemini AI is temporarily unavailable.",
+        "model_version": MODEL_VERSION,
     }
 
 
@@ -566,6 +804,7 @@ class PredictionResponse(BaseModel):
     prediction: str
     confidence: float
     explanation: str
+    model_version: str = MODEL_VERSION
 
 
 class ErrorResponse(BaseModel):
@@ -646,6 +885,16 @@ def readiness_check():
         return payload
     return JSONResponse(status_code=503, content=payload)
 
+
+@app.get("/metrics", tags=["Health Check"])
+def metrics_endpoint():
+    if generate_latest is None:
+        return JSONResponse(
+            status_code=503,
+            content={"error": "metrics_unavailable", "message": "prometheus_client is not installed."},
+        )
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
 @app.post("/predict", response_model=PredictionResponse, tags=["AI Analysis"])
 async def predict(article: NewsArticle, request: Request):
     """Analyze news text using Gemini AI (primary) with local ML fallback."""
@@ -702,8 +951,9 @@ async def predict(article: NewsArticle, request: Request):
             )
 
     # Check cache
-    if text in cache:
-        return cache[text]
+    cached = cache.get(text)
+    if cached is not None:
+        return cached
 
     logger.info("New prediction request (%d chars).", len(text))
 
@@ -714,6 +964,8 @@ async def predict(article: NewsArticle, request: Request):
     if result is None and USE_LOCAL_MODEL:
         try:
             result = analyze_with_local_model(text)
+            if GEMINI_FALLBACK is not None:
+                GEMINI_FALLBACK.inc()
         except Exception as e:
             logger.warning("Local model also failed: %s", e)
 
@@ -729,9 +981,7 @@ async def predict(article: NewsArticle, request: Request):
     response = PredictionResponse(**result)
 
     # Cache it
-    if len(cache) > settings.cache_max_items:
-        cache.pop(next(iter(cache)))
-    cache[text] = response
+    cache.set(text, response)
 
     return response
 

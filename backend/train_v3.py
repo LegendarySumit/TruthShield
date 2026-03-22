@@ -8,8 +8,10 @@ Uses improved TF-IDF features + ensemble (LR + SVC + RF) with comprehensive
 sanity checks across all claim categories.
 """
 
+import json
 import pandas as pd
 import numpy as np
+import sklearn
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -26,6 +28,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, "models")
 MODEL_PATH = os.path.join(MODEL_DIR, "model.pkl")
 VECTORIZER_PATH = os.path.join(MODEL_DIR, "vectorizer.pkl")
+METADATA_PATH = os.path.join(MODEL_DIR, "model_metadata.json")
+EVAL_REPORT_PATH = os.path.join(MODEL_DIR, "evaluation_report.json")
 
 
 def clean_text(text):
@@ -237,8 +241,35 @@ def train_model():
     os.makedirs(MODEL_DIR, exist_ok=True)
     joblib.dump(ensemble, MODEL_PATH)
     joblib.dump(vectorizer, VECTORIZER_PATH)
+
+    metadata = {
+        "model_version": "v3",
+        "sklearn_version": sklearn.__version__,
+        "numpy_version": np.__version__,
+        "model_path": MODEL_PATH,
+        "vectorizer_path": VECTORIZER_PATH,
+        "feature_count": int(X_train_tfidf.shape[1]),
+    }
+    with open(METADATA_PATH, "w", encoding="utf-8") as metadata_file:
+        json.dump(metadata, metadata_file, indent=2)
+
+    eval_report = {
+        "accuracy": float(accuracy),
+        "f1_score": float(f1),
+        "cv_f1_mean": float(cv_scores.mean()),
+        "cv_f1_std": float(cv_scores.std()),
+        "train_samples": int(len(X_train)),
+        "test_samples": int(len(X_test)),
+        "total_samples": int(len(df)),
+        "confusion_matrix": cm.tolist(),
+    }
+    with open(EVAL_REPORT_PATH, "w", encoding="utf-8") as eval_file:
+        json.dump(eval_report, eval_file, indent=2)
+
     print(f"\n  Model saved to {MODEL_PATH}")
     print(f"  Vectorizer saved to {VECTORIZER_PATH}")
+    print(f"  Metadata saved to {METADATA_PATH}")
+    print(f"  Evaluation report saved to {EVAL_REPORT_PATH}")
 
     # --- 7. Comprehensive Sanity Checks ---
     print(f"\n{'=' * 60}")
