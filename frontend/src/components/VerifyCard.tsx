@@ -1,12 +1,58 @@
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import ResultCard from './ResultCard';
 import type { PredictionResult } from '../types';
 import { DocumentTextIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: string | HTMLElement,
+        options: {
+          sitekey: string;
+          callback?: (token: string) => void;
+          'expired-callback'?: () => void;
+          'error-callback'?: () => void;
+          theme?: 'light' | 'dark' | 'auto';
+          size?: 'normal' | 'compact' | 'flexible';
+        }
+      ) => string;
+      reset: (widgetId?: string) => void;
+      remove: (widgetId?: string) => void;
+    };
+  }
+}
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
+const CAPTCHA_ENABLED = Boolean(TURNSTILE_SITE_KEY);
+
+const ensureTurnstileScript = (): Promise<void> => {
+  if (window.turnstile) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const existingScript = document.querySelector<HTMLScriptElement>('script[data-turnstile-script="true"]');
+    if (existingScript) {
+      existingScript.addEventListener('load', () => resolve(), { once: true });
+      existingScript.addEventListener('error', () => reject(new Error('Failed to load Turnstile script')), { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    script.async = true;
+    script.defer = true;
+    script.dataset.turnstileScript = 'true';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Turnstile script'));
+    document.head.appendChild(script);
+  });
+};
 
 const VerifyCard = () => {
   const [text, setText] = useState('');
@@ -14,6 +60,93 @@ const VerifyCard = () => {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [charCount, setCharCount] = useState(0);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaLoading, setCaptchaLoading] = useState(false);
+  const [showCaptchaWidget, setShowCaptchaWidget] = useState(true);
+  const [captchaStatus, setCaptchaStatus] = useState<'idle' | 'verifying' | 'success'>('idle');
+
+  const captchaContainerRef = useRef<HTMLDivElement | null>(null);
+  const turnstileWidgetIdRef = useRef<string | null>(null);
+  const verifyTimeoutRef = useRef<number | null>(null);
+  const successTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!CAPTCHA_ENABLED || !showCaptchaWidget || !captchaContainerRef.current) {
+      return;
+    }
+
+    let cancelled = false;
+    setCaptchaLoading(true);
+
+    ensureTurnstileScript()
+      .then(() => {
+        if (cancelled || !captchaContainerRef.current || !window.turnstile) {
+          return;
+        }
+
+        if (turnstileWidgetIdRef.current) {
+          window.turnstile.remove(turnstileWidgetIdRef.current);
+          turnstileWidgetIdRef.current = null;
+        }
+
+        turnstileWidgetIdRef.current = window.turnstile.render(captchaContainerRef.current, {
+          sitekey: TURNSTILE_SITE_KEY,
+          theme: 'auto',
+          size: 'normal',
+          callback: (token: string) => {
+            setCaptchaStatus('verifying');
+            setError(null);
+
+            verifyTimeoutRef.current = window.setTimeout(() => {
+              setCaptchaStatus('success');
+            }, 700);
+
+            successTimeoutRef.current = window.setTimeout(() => {
+              setCaptchaToken(token);
+              setShowCaptchaWidget(false);
+              if (window.turnstile && turnstileWidgetIdRef.current) {
+                window.turnstile.remove(turnstileWidgetIdRef.current);
+                turnstileWidgetIdRef.current = null;
+              }
+            }, 1800);
+          },
+          'expired-callback': () => {
+            setCaptchaToken(null);
+            setCaptchaStatus('idle');
+            setShowCaptchaWidget(true);
+            setError('Captcha expired. Please verify again before analyzing.');
+          },
+          'error-callback': () => {
+            setCaptchaToken(null);
+            setCaptchaStatus('idle');
+            setShowCaptchaWidget(true);
+            setError('Captcha failed. Please retry.');
+          },
+        });
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError('Unable to load captcha. Check your network and retry.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setCaptchaLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+      if (verifyTimeoutRef.current) {
+        window.clearTimeout(verifyTimeoutRef.current);
+        verifyTimeoutRef.current = null;
+      }
+      if (successTimeoutRef.current) {
+        window.clearTimeout(successTimeoutRef.current);
+        successTimeoutRef.current = null;
+      }
+    };
+  }, [showCaptchaWidget]);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
@@ -34,17 +167,39 @@ const VerifyCard = () => {
       return;
     }
 
+    if (CAPTCHA_ENABLED && !captchaToken) {
+      setError('Please complete captcha verification before analysis.');
+      return;
+    }
+
     setLoading(true);
     setResult(null);
     setError(null);
 
     try {
-      const response = await axios.post(`${API_URL}/predict`, { text });
+      const payload: { text: string; captcha_token?: string } = { text };
+      if (CAPTCHA_ENABLED && captchaToken) {
+        payload.captcha_token = captchaToken;
+      }
+
+      const response = await axios.post(`${API_URL}/predict`, payload);
       setResult(response.data);
     } catch (err: any) {
       if (err.response) {
         // Server responded with error
-        setError(`Server error: ${err.response.data.detail || 'Unable to analyze text'}`);
+        const apiError = err.response.data?.error;
+        const apiMessage = err.response.data?.message || 'Unable to analyze text';
+        setError(`Server error: ${apiMessage}`);
+
+        if (apiError === 'captcha_required' || apiError === 'captcha_failed') {
+          setCaptchaToken(null);
+          setCaptchaStatus('idle');
+          setShowCaptchaWidget(true);
+          if (window.turnstile && turnstileWidgetIdRef.current) {
+            window.turnstile.remove(turnstileWidgetIdRef.current);
+            turnstileWidgetIdRef.current = null;
+          }
+        }
       } else if (err.request) {
         // Request made but no response
         setError('Cannot connect to server. Please make sure the backend is running.');
@@ -128,6 +283,17 @@ const VerifyCard = () => {
 
             {/* Submit button */}
             <div className="text-center mt-4 xs:mt-5 sm:mt-6">
+              {CAPTCHA_ENABLED && showCaptchaWidget && (
+                <div className="mb-4 flex flex-col items-center gap-2">
+                  {captchaLoading ? <div className="h-[78px]" /> : <div ref={captchaContainerRef} />}
+                  {captchaStatus === 'verifying' && (
+                    <p className="text-xs sm:text-sm text-blue-400">Verifying...</p>
+                  )}
+                  {captchaStatus === 'success' && (
+                    <p className="text-xs sm:text-sm text-green-400">Success. Continuing...</p>
+                  )}
+                </div>
+              )}
               <motion.button
                 type="submit"
                 disabled={loading}

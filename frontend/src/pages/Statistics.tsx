@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 
 const Statistics = () => {
   const stats = [
-    { label: 'Detection Accuracy', value: '99.92%', icon: ShieldCheckIcon, color: 'from-green-400 to-emerald-500' },
+    { label: 'Output Type', value: 'Probabilistic', icon: ShieldCheckIcon, color: 'from-green-400 to-emerald-500' },
     { label: 'Training Samples', value: '20K+', icon: ChartBarIcon, color: 'from-blue-400 to-cyan-500' },
     { label: 'Training Size (Train set)', value: '16,000', icon: AcademicCapIcon, color: 'from-indigo-400 to-purple-500' },
     { label: 'Features Extracted', value: '10,000', icon: SparklesIcon, color: 'from-purple-400 to-violet-500' },
@@ -13,9 +13,9 @@ const Statistics = () => {
   const modelDetails = [
     { label: 'Algorithm', value: 'LR + SVM + Random Forest' },
     { label: 'Vectorization', value: 'TF-IDF with Bigrams' },
-    { label: 'Precision', value: '~99.9%' },
-    { label: 'Recall', value: '~99.9%' },
-    { label: 'F1 Score', value: '0.9992' },
+    { label: 'Precision', value: 'Varies by dataset and domain' },
+    { label: 'Recall', value: 'Varies by dataset and domain' },
+    { label: 'F1 Score', value: 'Published per evaluation run' },
     { label: 'Test Set Size', value: '4,000 samples' },
   ];
 
@@ -33,6 +33,9 @@ const Statistics = () => {
         </h1>
         <p className="text-base sm:text-lg md:text-xl text-gray-400">
           Real-time performance metrics and technical details
+        </p>
+        <p className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+          These values are model indicators and not guarantees of factual correctness.
         </p>
       </motion.div>
 

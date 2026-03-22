@@ -194,6 +194,9 @@ const ResultCard = ({ result }: ResultCardProps) => {
                 ? '✅ This article appears to be legitimate. Always verify from multiple sources.'
                 : '⚠️ Exercise caution with this content. Cross-reference with trusted news sources.'}
             </p>
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+              Model output is probabilistic and can contain false positives or false negatives.
+            </p>
           </motion.div>
         </div>
       </div>

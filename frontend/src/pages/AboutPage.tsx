@@ -174,7 +174,7 @@ const AboutPage = () => {
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-10 sm:mb-12 md:mb-16"
         >
           {[
-            { value: '99%', label: 'Accuracy Rate', gradient: 'from-green-500 to-emerald-500' },
+            { value: 'AI + ML', label: 'Dual Analysis Engine', gradient: 'from-green-500 to-emerald-500' },
             { value: '50K+', label: 'Active Users', gradient: 'from-indigo-500 to-purple-500' },
             { value: '1M+', label: 'Articles Verified', gradient: 'from-purple-500 to-violet-500' }
           ].map((stat, idx) => (

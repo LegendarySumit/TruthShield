@@ -6,7 +6,7 @@ const FAQ = () => {
   const faqs = [
     {
       question: 'How accurate is TruthShield?',
-      answer: 'TruthShield achieves ~99.92% accuracy on our test dataset of 4,000 samples. The model is trained on 20,000 balanced samples using an ensemble of Logistic Regression, SVM, and Random Forest, further augmented by Gemini AI for real-time reasoning.'
+      answer: 'TruthShield provides probabilistic predictions based on linguistic and contextual patterns. Performance varies by domain, writing style, and claim type. Use results as a decision-support signal, then verify with trusted sources.'
     },
     {
       question: 'What makes news "fake"?',
@@ -18,11 +18,11 @@ const FAQ = () => {
     },
     {
       question: 'Can I trust the confidence score?',
-      answer: 'Yes! Confidence scores between 70-80% indicate strong predictions. Scores above 80% show very high confidence. The model considers linguistic patterns, word usage, and statistical features to calculate accuracy.'
+      answer: 'Confidence reflects how certain the model is, not whether a claim is objectively true. Higher confidence can still be wrong in edge cases, so critical decisions should include independent verification.'
     },
     {
       question: 'What happens if I submit short text?',
-      answer: 'You need at least 50 characters for accurate analysis. Short texts don\'t provide enough context for the model to make reliable predictions. We recommend submitting the full headline and lead paragraph.'
+      answer: 'You need at least 50 characters for stable analysis. Short texts do not provide enough context for reliable prediction, so submit full headline and lead paragraph where possible.'
     },
     {
       question: 'Is my data stored or shared?',

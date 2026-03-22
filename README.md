@@ -1,11 +1,11 @@
 # 🛡️ TruthShield - AI-Powered Fake News Detector
 
-![TruthShield](https://img.shields.io/badge/Accuracy-100%25-brightgreen)
+![TruthShield](https://img.shields.io/badge/Predictions-Probabilistic-orange)
 ![Python](https://img.shields.io/badge/Python-3.13-blue)
 ![React](https://img.shields.io/badge/React-19-61dafb)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
 
-**Unmask the Truth with AI** - Detect fake news instantly with 100% accuracy using advanced Machine Learning and Natural Language Processing.
+**Unmask the Truth with AI** - Detect potentially misleading news quickly using advanced Machine Learning and Natural Language Processing.
 
 ---
 
@@ -29,7 +29,7 @@ http://localhost:5173
 ## ✨ Features
 
 - ⚡ **Lightning Fast** - Results in <1 second
-- 🎯 **100% Accuracy** - Perfect score on test dataset
+- 🎯 **Probabilistic Scoring** - Confidence-based output, not absolute certainty
 - 🎨 **Beautiful UI** - Glassmorphism design with smooth animations
 - 🔒 **Privacy First** - Zero data collection or tracking
 - 📱 **Responsive** - Works on all devices
@@ -42,12 +42,30 @@ http://localhost:5173
 
 | Metric | Value |
 |--------|-------|
-| **Accuracy** | 100.00% |
-| **F1 Score** | 1.0000 |
+| **Validation Approach** | Held-out evaluation + live model monitoring |
+| **Output Type** | Probabilistic classification with confidence score |
 | **Training Samples** | 640 articles |
 | **Test Samples** | 160 articles |
 | **Features Extracted** | 1,360 linguistic markers |
 | **Prediction Speed** | <100ms |
+
+---
+
+## ⚠️ Model Limitations and Responsible Use
+
+- TruthShield predictions can produce false positives and false negatives.
+- Confidence scores indicate model certainty, not factual proof.
+- Outputs should be treated as decision support, not final truth.
+- Always verify important claims with independent, authoritative sources.
+
+---
+
+## ✅ Acceptable Use
+
+- Use TruthShield for research, education, and editorial triage.
+- Do not use it as the sole basis for legal, medical, financial, or safety-critical decisions.
+- Do not submit illegal, abusive, or harmful content.
+- Do not misrepresent TruthShield output as guaranteed fact.
 
 ---
 

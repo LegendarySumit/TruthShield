@@ -82,6 +82,15 @@ const Hero = () => {
         Get instant, accurate analysis of any news article.
       </motion.p>
 
+      <motion.p
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+        className="mt-2 max-w-3xl mx-auto text-xs sm:text-sm text-gray-500 dark:text-gray-400"
+      >
+        Predictions are probabilistic and may be wrong. Always cross-check with trusted sources.
+      </motion.p>
+
       {/* Feature Pills */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -94,7 +103,7 @@ const Hero = () => {
           className="flex items-center space-x-1.5 sm:space-x-2 px-3 py-2 xs:px-4 sm:px-6 sm:py-3 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 dark:from-indigo-500/30 dark:to-purple-500/30 backdrop-blur-sm border border-indigo-300 dark:border-indigo-500"
         >
           <ShieldCheckIcon className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 dark:text-indigo-400" />
-          <span className="font-semibold text-xs xs:text-sm sm:text-base text-gray-800 dark:text-gray-200">99% Accuracy</span>
+          <span className="font-semibold text-xs xs:text-sm sm:text-base text-gray-800 dark:text-gray-200">Probabilistic Results</span>
         </motion.div>
 
         <motion.div

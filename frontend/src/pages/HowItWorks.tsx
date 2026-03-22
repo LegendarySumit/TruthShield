@@ -75,7 +75,7 @@ const HowItWorks = () => {
       items: [
         'Ensemble: Logistic Regression + SVM + Random Forest',
         'Training samples: 20,000 balanced articles',
-        'Test accuracy: 99.92% on 4,000 samples',
+        'Held-out evaluation performed before release',
         'Regularization: L2 with balanced class weights'
       ]
     },

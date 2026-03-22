@@ -69,7 +69,7 @@ const Footer = () => {
             </p>
             <div className="flex items-start sm:items-center space-x-2 text-xs sm:text-sm text-indigo-300">
               <ShieldCheckIcon className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0 mt-0.5 sm:mt-0" />
-              <span className="break-words">99% Accuracy • 50K+ Active Users • 1M+ Articles Verified</span>
+              <span className="break-words">Confidence-based analysis • Independent fact-checking recommended</span>
             </div>
           </div>
 

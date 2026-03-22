@@ -4,7 +4,7 @@ import { StarIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 
 const testimonials = [
   {
-    quote: "This tool is an absolute game-changer for my research. I can quickly verify sources and avoid spreading misinformation. The AI is incredibly accurate!",
+    quote: "This tool is a game-changer for my research. I can quickly triage sources and reduce misinformation risk before publishing.",
     name: "Dr. Evelyn Reed",
     title: "University Professor",
     role: "Academic Research",
@@ -13,7 +13,7 @@ const testimonials = [
     gradient: "from-blue-500 to-cyan-500"
   },
   {
-    quote: "As an investigative journalist, I rely on this every single day. The accuracy is mind-blowing, and it saves me countless hours of fact-checking. Highly recommended!",
+    quote: "As an investigative journalist, I use this daily as a first-pass signal. It saves time and helps prioritize deeper fact-checking.",
     name: "Marcus Chen",
     title: "Investigative Journalist",
     role: "News Media",
@@ -72,7 +72,7 @@ const Reviews = () => {
             {[
               { value: '50K+', label: 'Active Users' },
               { value: '1M+', label: 'Articles Verified' },
-              { value: '99%', label: 'Accuracy Rate' }
+              { value: 'AI+ML', label: 'Hybrid Analysis' }
             ].map((stat, idx) => (
               <motion.div
                 key={idx}
