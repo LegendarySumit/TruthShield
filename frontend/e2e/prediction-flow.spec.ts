@@ -25,5 +25,6 @@ test('submits text and renders prediction result with captcha bypass', async ({ 
 
   await expect(page.getByText('Verification Result')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Real' })).toBeVisible();
-  await expect(page.getByText(/Model version: v3/i)).toBeVisible();
+  await expect(page.getByText('AI Analysis')).toBeVisible();
+  await expect(page.getByText(/Source-attributed, measured language/i)).toBeVisible();
 });
