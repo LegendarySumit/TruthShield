@@ -197,6 +197,11 @@ const ResultCard = ({ result }: ResultCardProps) => {
             <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
               Model output is probabilistic and can contain false positives or false negatives.
             </p>
+            {result.model_version && (
+              <p className="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center">
+                Model version: {result.model_version}
+              </p>
+            )}
           </motion.div>
         </div>
       </div>

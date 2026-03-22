@@ -101,6 +101,23 @@ http://localhost:5173
 4. Re-run training and publish updated metadata/evaluation artifacts.
 5. Promote only after staging smoke checks pass.
 
+### API Versioning and Contract Policy
+
+- Preferred stable API namespace is `/api/v1`.
+- Legacy unversioned routes remain available for backward compatibility.
+- Compatibility policy endpoint: `/api/v1/version-policy`.
+- OpenAPI schemas include curated examples for request/response models.
+
+### Data and Privacy Governance
+
+- Default submitted-text retention is `0` days (no request body persistence).
+- Optional privacy-first mode: set `NO_STORE_MODE=true` to disable API cache and enforce `Cache-Control: no-store` headers.
+- Governance details are exposed via `/api/v1/health` under `data_governance`.
+
+### Business Continuity
+
+- Incident response, backup/rollback strategy, and post-deploy verification are defined in [docs/operations-runbook.md](docs/operations-runbook.md).
+
 ---
 
 ## 🏗️ Project Structure

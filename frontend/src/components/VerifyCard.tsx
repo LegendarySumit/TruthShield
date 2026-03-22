@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ResultCard from './ResultCard';
 import type { PredictionResult } from '../types';
 import { DocumentTextIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { trackEvent } from '../lib/analytics';
 
 declare global {
   interface Window {
@@ -27,8 +28,9 @@ declare global {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const REQUEST_TIMEOUT_MS = Number(import.meta.env.VITE_REQUEST_TIMEOUT_MS || 12000);
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
-const CAPTCHA_ENABLED = Boolean(TURNSTILE_SITE_KEY);
+const CAPTCHA_ENABLED = Boolean(TURNSTILE_SITE_KEY) && import.meta.env.MODE !== 'test';
 
 const ensureTurnstileScript = (): Promise<void> => {
   if (window.turnstile) {
@@ -64,11 +66,89 @@ const VerifyCard = () => {
   const [captchaLoading, setCaptchaLoading] = useState(false);
   const [showCaptchaWidget, setShowCaptchaWidget] = useState(true);
   const [captchaStatus, setCaptchaStatus] = useState<'idle' | 'verifying' | 'success'>('idle');
+  const [retryPending, setRetryPending] = useState(false);
+  const [requestTimedOut, setRequestTimedOut] = useState(false);
+  const [requestAttempts, setRequestAttempts] = useState(0);
 
   const captchaContainerRef = useRef<HTMLDivElement | null>(null);
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const verifyTimeoutRef = useRef<number | null>(null);
   const successTimeoutRef = useRef<number | null>(null);
+
+  const submitRequest = async (payload: { text: string; captcha_token?: string }, isRetry = false) => {
+    if (!navigator.onLine) {
+      setError('You appear to be offline. Reconnect and try again.');
+      setRetryPending(true);
+      trackEvent('analysis_failed_offline', { attempt: requestAttempts + 1 });
+      return;
+    }
+
+    setLoading(true);
+    setResult(null);
+    setError(null);
+    setRequestTimedOut(false);
+    setRetryPending(false);
+    setRequestAttempts((prev) => prev + 1);
+
+    trackEvent('analysis_request_started', {
+      retry: isRetry,
+      text_length: payload.text.length,
+      captcha_enabled: CAPTCHA_ENABLED,
+      timeout_ms: REQUEST_TIMEOUT_MS,
+    });
+
+    try {
+      const response = await axios.post(`${API_URL}/api/v1/predict`, payload, { timeout: REQUEST_TIMEOUT_MS });
+      setResult(response.data);
+      trackEvent('analysis_request_succeeded', {
+        retry: isRetry,
+        prediction: response.data?.prediction || 'unknown',
+      });
+    } catch (err: unknown) {
+      const axiosErr = err as {
+        code?: string;
+        response?: { data?: { error?: string; message?: string } };
+        request?: unknown;
+      };
+
+      if (axiosErr.code === 'ECONNABORTED') {
+        setRequestTimedOut(true);
+        setRetryPending(true);
+        setError(`Request timed out after ${Math.round(REQUEST_TIMEOUT_MS / 1000)}s. You can retry.`);
+        trackEvent('analysis_failed_timeout', {
+          timeout_ms: REQUEST_TIMEOUT_MS,
+          retry: isRetry,
+        });
+      } else if (axiosErr.response) {
+        const apiError = axiosErr.response.data?.error;
+        const apiMessage = axiosErr.response.data?.message || 'Unable to analyze text';
+        setError(`Server error: ${apiMessage}`);
+        setRetryPending(true);
+        trackEvent('analysis_failed_api', { error_code: apiError || 'unknown', retry: isRetry });
+
+        if (apiError === 'captcha_required' || apiError === 'captcha_failed') {
+          setCaptchaToken(null);
+          setCaptchaStatus('idle');
+          setShowCaptchaWidget(true);
+          if (window.turnstile && turnstileWidgetIdRef.current) {
+            window.turnstile.remove(turnstileWidgetIdRef.current);
+            turnstileWidgetIdRef.current = null;
+          }
+        }
+      } else if (axiosErr.request) {
+        setError('Cannot connect to server. Please make sure the backend is running.');
+        setRetryPending(true);
+        trackEvent('analysis_failed_network', { retry: isRetry });
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+        setRetryPending(true);
+        trackEvent('analysis_failed_unexpected', { retry: isRetry });
+      }
+      console.error('Error details:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!CAPTCHA_ENABLED || !showCaptchaWidget || !captchaContainerRef.current) {
@@ -172,50 +252,25 @@ const VerifyCard = () => {
       return;
     }
 
-    setLoading(true);
-    setResult(null);
-    setError(null);
-
-    try {
-      const payload: { text: string; captcha_token?: string } = { text };
-      if (CAPTCHA_ENABLED && captchaToken) {
-        payload.captcha_token = captchaToken;
-      }
-
-      const response = await axios.post(`${API_URL}/predict`, payload);
-      setResult(response.data);
-    } catch (err: unknown) {
-      const axiosErr = err as {
-        response?: { data?: { error?: string; message?: string } };
-        request?: unknown;
-      };
-
-      if (axiosErr.response) {
-        // Server responded with error
-        const apiError = axiosErr.response.data?.error;
-        const apiMessage = axiosErr.response.data?.message || 'Unable to analyze text';
-        setError(`Server error: ${apiMessage}`);
-
-        if (apiError === 'captcha_required' || apiError === 'captcha_failed') {
-          setCaptchaToken(null);
-          setCaptchaStatus('idle');
-          setShowCaptchaWidget(true);
-          if (window.turnstile && turnstileWidgetIdRef.current) {
-            window.turnstile.remove(turnstileWidgetIdRef.current);
-            turnstileWidgetIdRef.current = null;
-          }
-        }
-      } else if (axiosErr.request) {
-        // Request made but no response
-        setError('Cannot connect to server. Please make sure the backend is running.');
-      } else {
-        // Something else went wrong
-        setError('An unexpected error occurred. Please try again.');
-      }
-      console.error('Error details:', err);
-    } finally {
-      setLoading(false);
+    const payload: { text: string; captcha_token?: string } = { text };
+    if (CAPTCHA_ENABLED && captchaToken) {
+      payload.captcha_token = captchaToken;
     }
+
+    await submitRequest(payload, false);
+  };
+
+  const handleRetry = async () => {
+    const payload: { text: string; captcha_token?: string } = { text };
+    if (CAPTCHA_ENABLED && captchaToken) {
+      payload.captcha_token = captchaToken;
+    }
+
+    trackEvent('analysis_retry_clicked', {
+      prior_timeout: requestTimedOut,
+      attempts: requestAttempts,
+    });
+    await submitRequest(payload, true);
   };
 
   return (
@@ -285,6 +340,19 @@ const VerifyCard = () => {
                 </motion.p>
               )}
             </AnimatePresence>
+
+            {retryPending && !loading && (
+              <div className="mt-3 flex items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => void handleRetry()}
+                  className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
+                >
+                  {requestTimedOut ? 'Retry Timed-out Request' : 'Retry Request'}
+                </button>
+                <span className="text-xs text-gray-500 dark:text-gray-400">Attempt #{requestAttempts + 1}</span>
+              </div>
+            )}
 
             {/* Submit button */}
             <div className="text-center mt-4 xs:mt-5 sm:mt-6">

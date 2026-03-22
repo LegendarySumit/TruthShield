@@ -23,6 +23,14 @@ def test_health_endpoint_returns_runtime_status():
     assert "dependencies" in payload
 
 
+def test_v1_health_endpoint_returns_runtime_status():
+    response = client.get("/api/v1/health")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "alive"
+    assert "data_governance" in payload
+
+
 def test_predict_rejects_empty_text():
     response = client.post("/predict", json={"text": "   "})
     assert response.status_code == 400
@@ -66,3 +74,27 @@ def test_predict_rate_limit_returns_429(monkeypatch):
     assert response.status_code == 429
     payload = response.json()
     assert payload["error"] == "ip_rate_limit_exceeded"
+
+
+def test_v1_predict_route_works_with_fallback(monkeypatch):
+    monkeypatch.setattr(app_main, "USE_LOCAL_MODEL", True)
+
+    async def _gemini_none(_: str):
+        return None
+
+    def _local_ok(_: str):
+        return {
+            "prediction": "Real",
+            "confidence": 0.75,
+            "explanation": "fallback",
+            "model_version": app_main.MODEL_VERSION,
+        }
+
+    monkeypatch.setattr(app_main, "analyze_with_gemini", _gemini_none)
+    monkeypatch.setattr(app_main, "analyze_with_local_model", _local_ok)
+
+    text = "This is a long enough article body used for test execution only. "
+    response = client.post("/api/v1/predict", json={"text": text})
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["prediction"] == "Real"

@@ -128,6 +128,9 @@ class Settings(BaseSettings):
     cache_max_items: int = 200
     cache_ttl_seconds: int = 900
     model_version: str = "v3"
+    retention_days_submitted_text: int = 0
+    no_store_mode: bool = False
+    privacy_contact_email: str = "privacy@truthshield.ai"
 
     metrics_enabled: bool = True
     sentry_dsn: str = ""
@@ -222,6 +225,10 @@ METRICS_ENABLED = settings.metrics_enabled
 CACHE_TTL_SECONDS = max(1, settings.cache_ttl_seconds)
 ALERT_LATENCY_MS = max(100, settings.alert_latency_ms)
 ALERT_5XX_PER_MINUTE = max(1, settings.alert_5xx_per_minute)
+RETENTION_DAYS_SUBMITTED_TEXT = max(0, settings.retention_days_submitted_text)
+NO_STORE_MODE = settings.no_store_mode
+PRIVACY_CONTACT_EMAIL = settings.privacy_contact_email.strip() or "privacy@truthshield.ai"
+API_V1_PREFIX = "/api/v1"
 
 SECURITY_CSP = settings.security_csp.strip()
 
@@ -269,6 +276,9 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Content-Security-Policy"] = SECURITY_CSP
+        if NO_STORE_MODE:
+            response.headers["Cache-Control"] = "no-store"
+            response.headers["Pragma"] = "no-cache"
         if IS_PRODUCTION:
             response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         return response
@@ -535,9 +545,19 @@ validate_runtime_configuration()
 
 # --- App Initialization ---
 app = FastAPI(
-    title="Fake News Detector API",
-    description="An API to detect fake news using Gemini AI with local ML fallback.",
-    version="2.0.0"
+    title="TruthShield API",
+    description=(
+        "TruthShield fake-news analysis API with Gemini as primary analyzer and local ML fallback. "
+        "Preferred stable namespace: /api/v1. Legacy unversioned routes remain for backward compatibility."
+    ),
+    version="2.1.0",
+    contact={"name": "TruthShield API Support", "email": "support@truthshield.ai"},
+    license_info={"name": "Proprietary"},
+    openapi_tags=[
+        {"name": "Health Check", "description": "Liveness, readiness, and metrics endpoints."},
+        {"name": "AI Analysis", "description": "News verification and confidence scoring."},
+        {"name": "Governance", "description": "Versioning and privacy governance controls."},
+    ],
 )
 
 app.add_middleware(RequestContextMiddleware)
@@ -569,7 +589,7 @@ app.add_middleware(
 )
 
 # --- In-memory Cache ---
-cache = TTLCache(max_items=settings.cache_max_items, ttl_seconds=CACHE_TTL_SECONDS)
+cache: Optional[TTLCache] = None if NO_STORE_MODE else TTLCache(max_items=settings.cache_max_items, ttl_seconds=CACHE_TTL_SECONDS)
 
 
 def get_client_ip(request: Request) -> str:
@@ -631,6 +651,17 @@ def get_dependencies_status() -> dict:
         "model_loaded": USE_LOCAL_MODEL,
         "model_version": MODEL_METADATA.get("model_version", MODEL_VERSION),
         "model_integrity_errors": model_integrity_errors,
+        "no_store_mode": NO_STORE_MODE,
+    }
+
+
+def get_data_governance_status() -> dict:
+    return {
+        "submitted_text_retention_days": RETENTION_DAYS_SUBMITTED_TEXT,
+        "request_text_persistence": "none" if RETENTION_DAYS_SUBMITTED_TEXT == 0 else "configured",
+        "no_store_mode": NO_STORE_MODE,
+        "dpa_contact_email": PRIVACY_CONTACT_EMAIL,
+        "storage_policy": "No request body content is persisted by the API",
     }
 
 # --- Helper Functions ---
@@ -797,19 +828,26 @@ def analyze_with_local_model(text: str) -> dict:
 
 # --- Pydantic Models ---
 class NewsArticle(BaseModel):
-    text: str
-    captcha_token: Optional[str] = None
+    text: str = Field(
+        ...,
+        min_length=1,
+        description="News article body to analyze.",
+        examples=[
+            "The Senate voted 67-33 to approve the Infrastructure Investment Act, allocating funds for bridge and road repairs."
+        ],
+    )
+    captcha_token: Optional[str] = Field(default=None, description="Optional Turnstile token when captcha is enabled.")
 
 class PredictionResponse(BaseModel):
-    prediction: str
-    confidence: float
-    explanation: str
-    model_version: str = MODEL_VERSION
+    prediction: str = Field(..., examples=["Real"])
+    confidence: float = Field(..., examples=[0.87])
+    explanation: str = Field(..., examples=["[AI Fact-Check] The article uses source-attributed and internally consistent claims."])
+    model_version: str = Field(default=MODEL_VERSION, examples=["v3"])
 
 
 class ErrorResponse(BaseModel):
-    error: str
-    message: str
+    error: str = Field(..., examples=["validation_error"])
+    message: str = Field(..., examples=["Request validation failed."])
 
 
 @app.exception_handler(HTTPException)
@@ -848,15 +886,18 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 # --- API Endpoints ---
 @app.get("/", tags=["Health Check"])
+@app.get(f"{API_V1_PREFIX}", tags=["Health Check"])
 def read_root():
     return {
         "status": "API is running",
         "gemini_enabled": gemini_client is not None,
         "local_model_loaded": USE_LOCAL_MODEL,
-        "primary_analyzer": "gemini" if gemini_client else "local_model"
+        "primary_analyzer": "gemini" if gemini_client else "local_model",
+        "api_namespace": API_V1_PREFIX,
     }
 
 @app.get("/health", tags=["Health Check"])
+@app.get(f"{API_V1_PREFIX}/health", tags=["Health Check"])
 def health_check():
     dependency_status = get_dependencies_status()
     return {
@@ -865,10 +906,12 @@ def health_check():
         "dependencies": dependency_status,
         "runtime": get_runtime_stats(),
         "config_errors": runtime_config_errors,
+        "data_governance": get_data_governance_status(),
     }
 
 
 @app.get("/ready", tags=["Health Check"])
+@app.get(f"{API_V1_PREFIX}/ready", tags=["Health Check"])
 def readiness_check():
     dependency_status = get_dependencies_status()
     analyzer_ready = dependency_status["gemini_client_initialized"] or dependency_status["model_loaded"]
@@ -887,6 +930,7 @@ def readiness_check():
 
 
 @app.get("/metrics", tags=["Health Check"])
+@app.get(f"{API_V1_PREFIX}/metrics", tags=["Health Check"])
 def metrics_endpoint():
     if generate_latest is None:
         return JSONResponse(
@@ -895,7 +939,39 @@ def metrics_endpoint():
         )
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
-@app.post("/predict", response_model=PredictionResponse, tags=["AI Analysis"])
+@app.get(f"{API_V1_PREFIX}/version-policy", tags=["Governance"])
+def version_policy():
+    return {
+        "preferred_namespace": API_V1_PREFIX,
+        "legacy_routes_supported": True,
+        "policy": "New integrations should use /api/v1 routes. Legacy unversioned routes are maintained for backward compatibility and may be deprecated with notice.",
+        "deprecation_notice_min_days": 180,
+        "contact": PRIVACY_CONTACT_EMAIL,
+    }
+
+
+@app.post(
+    "/predict",
+    response_model=PredictionResponse,
+    tags=["AI Analysis"],
+    responses={
+        400: {"model": ErrorResponse, "description": "Bad request"},
+        413: {"model": ErrorResponse, "description": "Payload too large"},
+        429: {"model": ErrorResponse, "description": "Rate limited"},
+        503: {"model": ErrorResponse, "description": "Analysis unavailable"},
+    },
+)
+@app.post(
+    f"{API_V1_PREFIX}/predict",
+    response_model=PredictionResponse,
+    tags=["AI Analysis"],
+    responses={
+        400: {"model": ErrorResponse, "description": "Bad request"},
+        413: {"model": ErrorResponse, "description": "Payload too large"},
+        429: {"model": ErrorResponse, "description": "Rate limited"},
+        503: {"model": ErrorResponse, "description": "Analysis unavailable"},
+    },
+)
 async def predict(article: NewsArticle, request: Request):
     """Analyze news text using Gemini AI (primary) with local ML fallback."""
     client_ip = get_client_ip(request)
@@ -950,10 +1026,11 @@ async def predict(article: NewsArticle, request: Request):
                 detail={"error": "captcha_failed", "message": "Captcha verification failed."},
             )
 
-    # Check cache
-    cached = cache.get(text)
-    if cached is not None:
-        return cached
+    # Check cache (disabled in no-store mode)
+    if cache is not None:
+        cached = cache.get(text)
+        if cached is not None:
+            return cached
 
     logger.info("New prediction request (%d chars).", len(text))
 
@@ -981,7 +1058,8 @@ async def predict(article: NewsArticle, request: Request):
     response = PredictionResponse(**result)
 
     # Cache it
-    cache.set(text, response)
+    if cache is not None:
+        cache.set(text, response)
 
     return response
 

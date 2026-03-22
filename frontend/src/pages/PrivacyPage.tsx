@@ -14,9 +14,19 @@ const sections = [
       'Submitted text is used solely to generate a fake-news prediction and confidence score. It is not used for advertising, sold to third parties, or retained after the request completes. Aggregate, anonymised metrics (e.g. total requests per day) may be collected to monitor service health.',
   },
   {
+    title: 'Retention Policy and No-Store Mode',
+    content:
+      'Our default retention policy for submitted request text is 0 days. For privacy-first deployments, customers can enable no-store mode, which disables API caching and returns no-store response headers.',
+  },
+  {
     title: 'Third-Party Services',
     content:
       'Results may be enhanced by the Google Gemini API. Text sent to Gemini is subject to Google\'s own privacy policy (policies.google.com). No other third-party analytics or tracking scripts are embedded in TruthShield.',
+  },
+  {
+    title: 'Privacy-Safe Telemetry',
+    content:
+      'Operational telemetry records service events such as page views and request outcomes. Submitted article text is never included in telemetry payloads.',
   },
   {
     title: 'Cookies & Local Storage',
