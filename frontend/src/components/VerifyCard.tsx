@@ -4,7 +4,7 @@ import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import ResultCard from './ResultCard';
 import type { PredictionResult } from '../types';
-import { DocumentTextIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, DocumentTextIcon, ExclamationTriangleIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { trackEvent } from '../lib/analytics';
 
 declare global {
@@ -330,7 +330,7 @@ const VerifyCard = () => {
 
             {/* Error message */}
             <AnimatePresence>
-              {error && (
+              {error && !retryPending && (
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -343,16 +343,43 @@ const VerifyCard = () => {
             </AnimatePresence>
 
             {retryPending && !loading && (
-              <div className="mt-3 flex items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => void handleRetry()}
-                  className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
-                >
-                  {requestTimedOut ? 'Retry Timed-out Request' : 'Retry Request'}
-                </button>
-                <span className="text-xs text-gray-500 dark:text-gray-400">Attempt #{requestAttempts + 1}</span>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-3 rounded-xl border border-indigo-200/70 dark:border-indigo-800/60 bg-gradient-to-r from-indigo-50/85 via-white/70 to-violet-50/85 dark:from-indigo-950/45 dark:via-gray-900/55 dark:to-violet-950/40 px-3 sm:px-4 py-3"
+              >
+                <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-3">
+                  <div className="flex items-start gap-2.5">
+                    <div className="mt-0.5 p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300">
+                      <ExclamationTriangleIcon className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-rose-500 dark:text-rose-300 leading-tight">
+                        {error || 'Request failed. Please retry.'}
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        {requestTimedOut
+                          ? 'The server took too long to respond. You can retry now.'
+                          : 'Temporary issue detected. Retry to continue analysis.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 self-end sm:self-auto">
+                    <button
+                      type="button"
+                      onClick={() => void handleRetry()}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 text-white text-sm font-semibold shadow-md shadow-indigo-500/25 hover:opacity-95 transition-all"
+                    >
+                      <ArrowPathIcon className="h-4 w-4" />
+                      {requestTimedOut ? 'Retry Timed-out Request' : 'Retry Request'}
+                    </button>
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 bg-white/70 dark:bg-gray-800/70 px-2.5 py-1 rounded-md border border-gray-200 dark:border-gray-700">
+                      Attempt #{requestAttempts + 1}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
             )}
 
             {/* Submit button */}
