@@ -32,6 +32,9 @@ http://localhost:5173
 - 🎯 **Probabilistic Scoring** - Confidence-based output, not absolute certainty
 - 🎨 **Beautiful UI** - Glassmorphism design with smooth animations
 - 🔒 **Privacy First** - Zero data collection or tracking
+- 🧭 **Versioned API** - Stable `/api/v1` contract with legacy route compatibility
+- 🛡️ **Abuse Protection** - Rate-limiting plus optional Turnstile captcha
+- 🧪 **CI Browser E2E** - Playwright prediction-flow gate with safe captcha bypass in CI
 - 📱 **Responsive** - Works on all devices
 - 🌙 **Dark Mode** - Easy on the eyes
 - 📚 **Educational** - Learn how fake news detection works
@@ -117,27 +120,33 @@ http://localhost:5173
 ### Business Continuity
 
 - Incident response, backup/rollback strategy, and post-deploy verification are defined in [docs/operations-runbook.md](docs/operations-runbook.md).
+- CI includes browser E2E prediction-flow validation using Playwright with staging test-mode captcha bypass.
 
 ---
 
 ## 🏗️ Project Structure
 
 ```
-FakeNews/
+TruthShield/
 ├── backend/
-│   ├── main.py              # FastAPI app & endpoints
-│   ├── train.py             # Model training script
-│   ├── test_model.py        # Testing script
-│   ├── models/              # Trained models
-│   └── Enhanced_Dataset.csv # Training data (800 articles)
-│
-└── frontend/
-    ├── src/
-    │   ├── components/      # UI components (7 files)
-    │   ├── pages/           # Page components (5 files)
-    │   └── types.ts         # TypeScript types
-    └── public/
-        └── favicon.svg      # Custom icon
+│   ├── main.py                    # FastAPI app and API endpoints
+│   ├── train_v3.py                # Model training script (v3)
+│   ├── tests/
+│   │   ├── test_api.py
+│   │   └── test_deployed_smoke.py
+│   ├── models/                    # model.pkl, vectorizer.pkl, metadata
+│   └── Enhanced_Dataset_v3.csv    # Training data
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── test/
+│   │   └── lib/
+│   └── .env.example
+├── docs/
+│   └── operations-runbook.md
+├── docker-compose.yml
+└── render.yaml
 ```
 
 ## Local Development Setup
@@ -165,14 +174,13 @@ pip install -r backend/requirements.txt
 
 **Train the ML model:**
 
-You need a dataset for training. Download the "Fake and real news dataset" from Kaggle: [https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset](https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset)
-
-Place the `Fake.csv` and `True.csv` files in the `backend/` directory.
+The repository already includes `Enhanced_Dataset_v3.csv` for training.
+If you want larger/alternative data, you can also add `Fake.csv` and `True.csv` from Kaggle: [https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset](https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset)
 
 Then, run the training script:
 
 ```bash
-python backend/train.py
+python backend/train_v3.py
 ```
 
 This will create `model.pkl` and `vectorizer.pkl` in the `backend/models/` directory.
@@ -192,6 +200,7 @@ The API will be available at `http://localhost:8000`.
 ```bash
 cd frontend
 npm install
+cp .env.example .env  # On Windows PowerShell: Copy-Item .env.example .env
 ```
 
 **Run the frontend development server:**
@@ -220,7 +229,11 @@ The application is designed to be easily deployable on platforms like Vercel (fo
 
 1.  Connect your Git repository to Vercel.
 2.  Set the framework to "Vite".
-3.  Add an environment variable `VITE_API_URL` pointing to your deployed backend URL.
+3.  Add environment variables:
+    - `VITE_API_URL` = your deployed backend base URL
+    - `VITE_REQUEST_TIMEOUT_MS` = `12000`
+    - `VITE_CAPTCHA_BYPASS` = `false` (keep disabled in production)
+    - `VITE_ANALYTICS_ENABLED` = `false` unless you have a telemetry endpoint
 4.  Deploy!
 
 ### Render (Backend)
@@ -228,7 +241,18 @@ The application is designed to be easily deployable on platforms like Vercel (fo
 1.  Connect your Git repository to Render.
 2.  Create a new Web Service.
 3.  Set the runtime to "Python 3".
-4.  Set the build command to `pip install -r backend/requirements.txt && python backend/train.py`.
-5.  Set the start command to `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`.
-6.  Deploy!
+4.  Set the build command to `pip install -r requirements.txt`.
+5.  Set the start command to `uvicorn main:app --host 0.0.0.0 --port $PORT`.
+6.  Configure required production environment variables:
+    - `ENVIRONMENT=production`
+    - `FORCE_HTTPS=true`
+    - `TRUSTED_HOSTS=<your-render-domain>`
+    - `CORS_ALLOW_ORIGINS=<your-frontend-domain>`
+    - `CORS_DEV_ALLOW_ALL=false`
+    - `GEMINI_API_KEY=<secret>`
+    - `NO_STORE_MODE=true`
+    - `RETENTION_DAYS_SUBMITTED_TEXT=0`
+    - `PRIVACY_CONTACT_EMAIL=privacy@truthshield.ai`
+    - If captcha is enabled: `CAPTCHA_ENABLED=true`, `CAPTCHA_SECRET_KEY=<secret>`
+7.  Deploy!
 

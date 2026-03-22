@@ -4,7 +4,7 @@ type TelemetryPayload = Record<string, TelemetryValue>;
 const ANALYTICS_ENDPOINT = import.meta.env.VITE_ANALYTICS_ENDPOINT || '';
 const ANALYTICS_ENABLED = import.meta.env.VITE_ANALYTICS_ENABLED !== 'false';
 
-const BLOCKED_KEYS = ['text', 'article', 'body', 'content'];
+const BLOCKED_KEYS = ['text', 'article', 'body', 'content', 'submission', 'prompt', 'query', 'input', 'message'];
 
 const sanitizePayload = (payload: TelemetryPayload): TelemetryPayload => {
   const sanitized: TelemetryPayload = {};

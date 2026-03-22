@@ -23,8 +23,8 @@ services:
         reservations:
           cpus: '0.25'
           memory: 128M
-    # The backend needs the model files to be present.
-    # You should run `python backend/train.py` locally first.
+    # The backend needs model files to be present.
+    # You should run `python backend/train_v3.py` locally first.
 
   frontend:
     build:

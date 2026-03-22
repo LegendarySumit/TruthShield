@@ -30,7 +30,8 @@ declare global {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const REQUEST_TIMEOUT_MS = Number(import.meta.env.VITE_REQUEST_TIMEOUT_MS || 12000);
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
-const CAPTCHA_ENABLED = Boolean(TURNSTILE_SITE_KEY) && import.meta.env.MODE !== 'test';
+const CAPTCHA_BYPASS = import.meta.env.VITE_CAPTCHA_BYPASS === 'true';
+const CAPTCHA_ENABLED = Boolean(TURNSTILE_SITE_KEY) && import.meta.env.MODE !== 'test' && !CAPTCHA_BYPASS;
 
 const ensureTurnstileScript = (): Promise<void> => {
   if (window.turnstile) {

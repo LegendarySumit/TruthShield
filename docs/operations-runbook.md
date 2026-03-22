@@ -53,6 +53,7 @@
 - Confirm timeout/retry UX works for simulated network delays.
 - Confirm offline banner appears when browser is offline.
 - Confirm error boundary fallback screen renders if a crash is triggered.
+- Confirm browser E2E prediction flow passes in CI (`frontend-e2e` job) using `VITE_CAPTCHA_BYPASS=true` test-mode bypass.
 
 3. Trust and governance verification
 - Confirm response contains `model_version`.

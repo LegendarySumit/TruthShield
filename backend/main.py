@@ -339,7 +339,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         return response
 
 
-class GemininCircuitBreaker:
+class GeminiCircuitBreaker:
     def __init__(self, fail_threshold: int, open_seconds: int):
         self.fail_threshold = fail_threshold
         self.open_seconds = open_seconds
@@ -448,7 +448,7 @@ class SimpleRateLimiter:
 
 rate_limiter = SimpleRateLimiter()
 runtime_config_errors: list[str] = []
-gemini_circuit = GemininCircuitBreaker(GEMINI_CIRCUIT_FAIL_THRESHOLD, GEMINI_CIRCUIT_OPEN_SECONDS)
+gemini_circuit = GeminiCircuitBreaker(GEMINI_CIRCUIT_FAIL_THRESHOLD, GEMINI_CIRCUIT_OPEN_SECONDS)
 recent_5xx_events: deque[float] = deque()
 
 # Configure Gemini API (Primary analysis engine)

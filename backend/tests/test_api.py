@@ -98,3 +98,12 @@ def test_v1_predict_route_works_with_fallback(monkeypatch):
     assert response.status_code == 200
     payload = response.json()
     assert payload["prediction"] == "Real"
+
+
+def test_no_store_mode_headers(monkeypatch):
+    monkeypatch.setattr(app_main, "NO_STORE_MODE", True)
+
+    response = client.get("/api/v1/health")
+    assert response.status_code == 200
+    assert response.headers.get("Cache-Control") == "no-store"
+    assert response.headers.get("Pragma") == "no-cache"
