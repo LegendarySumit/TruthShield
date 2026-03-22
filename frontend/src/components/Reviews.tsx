@@ -103,12 +103,9 @@ const Reviews = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.15 }}
               whileHover={{ y: -10, scale: 1.02 }}
-              className="group relative"
+              className="group relative h-full"
             >
-              {/* Glowing effect */}
-              <div className={`absolute -inset-0.5 bg-gradient-to-r ${testimonial.gradient} rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500`} />
-              
-              <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl p-4 xs:p-5 sm:p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 hover:shadow-2xl transition-all duration-300">
+              <div className="relative h-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl p-4 xs:p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-200 dark:border-gray-800 transition-all duration-300 flex flex-col">
                 {/* Rating Stars */}
                 <div className="flex items-center space-x-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -125,7 +122,7 @@ const Reviews = () => {
                 </div>
 
                 {/* Quote */}
-                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4 sm:mb-6 italic">
+                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4 sm:mb-6 italic flex-1">
                   "{testimonial.quote}"
                 </p>
 

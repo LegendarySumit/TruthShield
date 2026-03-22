@@ -182,27 +182,6 @@ const ResultCard = ({ result }: ResultCardProps) => {
             </div>
           </motion.div>
 
-          {/* Action Tips */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.9 }}
-            className="mt-6 pt-6 border-t-2 border-gray-200 dark:border-gray-700"
-          >
-            <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
-              {isReal
-                ? '✅ This article appears to be legitimate. Always verify from multiple sources.'
-                : '⚠️ Exercise caution with this content. Cross-reference with trusted news sources.'}
-            </p>
-            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-              Model output is probabilistic and can contain false positives or false negatives.
-            </p>
-            {result.model_version && (
-              <p className="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center">
-                Model version: {result.model_version}
-              </p>
-            )}
-          </motion.div>
         </div>
       </div>
     </motion.div>

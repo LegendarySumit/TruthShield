@@ -28,10 +28,12 @@ declare global {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const REQUEST_TIMEOUT_MS = Number(import.meta.env.VITE_REQUEST_TIMEOUT_MS || 12000);
+const REQUEST_TIMEOUT_MS = Number(import.meta.env.VITE_REQUEST_TIMEOUT_MS || 45000);
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
 const CAPTCHA_BYPASS = import.meta.env.VITE_CAPTCHA_BYPASS === 'true';
 const CAPTCHA_ENABLED = Boolean(TURNSTILE_SITE_KEY) && import.meta.env.MODE !== 'test' && !CAPTCHA_BYPASS;
+const PREDICT_V1_URL = `${API_URL}/api/v1/predict`;
+const PREDICT_LEGACY_URL = `${API_URL}/predict`;
 
 const ensureTurnstileScript = (): Promise<void> => {
   if (window.turnstile) {
@@ -41,6 +43,10 @@ const ensureTurnstileScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     const existingScript = document.querySelector<HTMLScriptElement>('script[data-turnstile-script="true"]');
     if (existingScript) {
+      if (window.turnstile || existingScript.dataset.turnstileLoaded === 'true') {
+        resolve();
+        return;
+      }
       existingScript.addEventListener('load', () => resolve(), { once: true });
       existingScript.addEventListener('error', () => reject(new Error('Failed to load Turnstile script')), { once: true });
       return;
@@ -51,7 +57,11 @@ const ensureTurnstileScript = (): Promise<void> => {
     script.async = true;
     script.defer = true;
     script.dataset.turnstileScript = 'true';
-    script.onload = () => resolve();
+    script.dataset.turnstileLoaded = 'false';
+    script.onload = () => {
+      script.dataset.turnstileLoaded = 'true';
+      resolve();
+    };
     script.onerror = () => reject(new Error('Failed to load Turnstile script'));
     document.head.appendChild(script);
   });
@@ -76,6 +86,15 @@ const VerifyCard = () => {
   const verifyTimeoutRef = useRef<number | null>(null);
   const successTimeoutRef = useRef<number | null>(null);
 
+  useEffect(() => {
+    // Self-heal visibility: if captcha is required and token is missing,
+    // ensure the widget is shown.
+    if (CAPTCHA_ENABLED && !captchaToken && !showCaptchaWidget) {
+      setShowCaptchaWidget(true);
+      setCaptchaStatus('idle');
+    }
+  }, [captchaToken, showCaptchaWidget]);
+
   const submitRequest = async (payload: { text: string; captcha_token?: string }, isRetry = false) => {
     if (!navigator.onLine) {
       setError('You appear to be offline. Reconnect and try again.');
@@ -99,11 +118,25 @@ const VerifyCard = () => {
     });
 
     try {
-      const response = await axios.post(`${API_URL}/api/v1/predict`, payload, { timeout: REQUEST_TIMEOUT_MS });
+      let response;
+      let usedLegacyRoute = false;
+      try {
+        response = await axios.post(PREDICT_V1_URL, payload, { timeout: REQUEST_TIMEOUT_MS });
+      } catch (v1Err: unknown) {
+        const v1AxiosErr = v1Err as { response?: { status?: number } };
+        if (v1AxiosErr.response?.status === 404) {
+          usedLegacyRoute = true;
+          response = await axios.post(PREDICT_LEGACY_URL, payload, { timeout: REQUEST_TIMEOUT_MS });
+        } else {
+          throw v1Err;
+        }
+      }
+
       setResult(response.data);
       trackEvent('analysis_request_succeeded', {
         retry: isRetry,
         prediction: response.data?.prediction || 'unknown',
+        legacy_route: usedLegacyRoute,
       });
     } catch (err: unknown) {
       const axiosErr = err as {
@@ -249,6 +282,8 @@ const VerifyCard = () => {
     }
 
     if (CAPTCHA_ENABLED && !captchaToken) {
+      setShowCaptchaWidget(true);
+      setCaptchaStatus('idle');
       setError('Please complete captcha verification before analysis.');
       return;
     }
@@ -262,6 +297,13 @@ const VerifyCard = () => {
   };
 
   const handleRetry = async () => {
+    if (CAPTCHA_ENABLED && !captchaToken) {
+      setShowCaptchaWidget(true);
+      setCaptchaStatus('idle');
+      setError('Please complete captcha verification before analysis.');
+      return;
+    }
+
     const payload: { text: string; captcha_token?: string } = { text };
     if (CAPTCHA_ENABLED && captchaToken) {
       payload.captcha_token = captchaToken;
@@ -386,7 +428,14 @@ const VerifyCard = () => {
             <div className="text-center mt-4 xs:mt-5 sm:mt-6">
               {CAPTCHA_ENABLED && showCaptchaWidget && (
                 <div className="mb-4 flex flex-col items-center gap-2">
-                  {captchaLoading ? <div className="h-[78px]" /> : <div ref={captchaContainerRef} />}
+                  <div className="w-full flex justify-center px-2 sm:px-0 box-border">
+                    <div className="w-[300px] sm:w-[320px] scale-90 sm:scale-100 origin-top">
+                      <div ref={captchaContainerRef} className="w-full min-h-[72px] sm:min-h-[78px]" />
+                    </div>
+                  </div>
+                  {captchaLoading && (
+                    <p className="text-xs sm:text-sm text-indigo-400">Loading captcha...</p>
+                  )}
                   {captchaStatus === 'verifying' && (
                     <p className="text-xs sm:text-sm text-blue-400">Verifying...</p>
                   )}
