@@ -256,3 +256,18 @@ The application is designed to be easily deployable on platforms like Vercel (fo
     - If captcha is enabled: `CAPTCHA_ENABLED=true`, `CAPTCHA_SECRET_KEY=<secret>`
 7.  Deploy!
 
+---
+
+## 📄 License
+
+This project is licensed under a Proprietary All Rights Reserved License. See the `LICENSE` file for details.
+
+---
+
+## 👨‍💻 Author
+
+**LegendarySumit**
+
+- GitHub: [@LegendarySumit](https://github.com/LegendarySumit)
+- Project: [TruthShield](https://github.com/LegendarySumit/TruthShield)
+
